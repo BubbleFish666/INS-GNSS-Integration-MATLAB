@@ -21,15 +21,19 @@ data_range = (144 <= t) & (t <= 160);
 
 %% plot data
 subplot(2,1,1);
-plot(t(data_range), (lon(data_range)-9.26066).*transverseRadius(9.26066), 'x', t(data_range), (lat(data_range)-49.06588).*meridionalRadius(49.06588), '.')
-title('lon, lat')
+plot(t(data_range), (lon(data_range)-9.26066).*transverseRadius(9.26066), 'x',...
+     t(data_range), (rlon(data_range)-9.26066).*transverseRadius(9.26066), '.')
+title('lon, raw lon')
+legend('lon', 'raw lon')
 % xticks(0:10:200)
 grid on
 hold on
 
 subplot(2,1,2);
-plot(t(data_range), (rlon(data_range)-9.26066).*transverseRadius(9.26066), 'x', t(data_range), (rlat(data_range)-49.06588).*meridionalRadius(49.06588), '.')
-title('raw lon, raw lat')
+plot(t(data_range), (lat(data_range)-49.06588).*meridionalRadius(49.06588), 'x',...
+     t(data_range), (rlat(data_range)-49.06588).*meridionalRadius(49.06588), '.')
+title('lat, raw lat')
+legend('lat', 'raw lat')
 % xticks(0:10:200)
 grid on
 hold on
