@@ -1,9 +1,9 @@
 % error states
-KF.dpsi_nb = [0; 0; 0];  % attitude error
-KF.dv_eb_n = [0; 0; 0];  % velocity error
-KF.dllh = [0; 0; 0];  % position error
-KF.ba = [0; 0; 0];  % accelorometer error
-KF.bg = [0; 0; 0];  % gyro error
+KF.dpsi_nb = [0; 0; 0];  % attitude error (rad) numerical issue?
+KF.dv_eb_n = [0; 0; 0];  % velocity error (m/s)
+KF.dllh = [0; 0; 0];  % position error (milli rad)
+KF.ba = [0; 0; 0];  % accelorometer error (m/s^2)
+KF.bg = [0; 0; 0];  % gyro error (rad/s)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%% PAY ATTENTION TO SCALING %%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -16,8 +16,8 @@ KF.P(3,3) = 0.02^2;  % yaw variance (0.02 rad)^2
 KF.P(4,4) = 1.0^2;  % north velocity variance (1.0 m/s)^2
 KF.P(5,5) = 1.0^2;  % east velocity variance (1.0 m/s)^2
 KF.P(6,6) = 0;  % vertical velocity variance
-KF.P(7,7) = (2.0 / meridionalRadius(INS.lat0 / llh_scale) * 1e3)^2;  % lat (milli rad)^2
-KF.P(8,8) = (2.0 / transverseRadius(INS.lat0 / llh_scale) * 1e3)^2;  % lon (milli rad)^2
+KF.P(7,7) = (2.0 * llh_scale / meridionalRadius(INS.lat0 / llh_scale))^2;  % GNSS horizontal accuracy 2m -> lat (milli rad)^2
+KF.P(8,8) = (2.0 * llh_scale / transverseRadius(INS.lat0 / llh_scale))^2;  % GNSS horizontal accuracy 2m -> lon (milli rad)^2
 KF.P(9,9) = 0;  % height
 KF.P(10,10) = (0.03 * 10 * 1e-3)^2;  % accelorometer bias (0.03 mg)^2
 KF.P(11,11) = (0.03 * 10 * 1e-3)^2;  % accelorometer bias (0.03 mg)^2
@@ -33,9 +33,8 @@ KF.H = [zeros(2,3), zeros(2,3), [eye(2), zeros(2,1)], zeros(2,3), zeros(2,3)];
 KF.Q = zeros(15);
 KF.Q(4:6 , 4:6) = (1.6 * 10 * 1e-3 * T)^2 * eye(3);  % velocity error from accelorometer noise 1.6 mg
 KF.Q(1:3 , 1:3) = (deg2rad(0.06) * T)^2 * eye(3);  % attitude error from gyro noise 0.06 deg/s
+
 % measurement noise
 % error from GNSS 2.0m horizontal (only consider GNSS horizontal data)
-% R = [(2.0 / meridionalRadius(deg2rad(lat)) * 1e3)^2, 0;
-%      0, (2.0 / transverseRadius(deg2rad(lat)) * 1e3)^2];
-KF.R = [(2.0 / meridionalRadius(INS.lat0 / llh_scale))^2, 0;
-        0, (2.0 / transverseRadius(INS.lat0 / llh_scale))^2];
+KF.R = [(2.0 * llh_scale / meridionalRadius(INS.lat / llh_scale))^2, 0;
+        0, (2.0 * llh_scale / transverseRadius(INS.lat / llh_scale))^2];

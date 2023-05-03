@@ -1,6 +1,6 @@
 % initial orientation
 % Rnb = eye(3);
-INS.psi0 = deg2rad(360 - 329.32);  % yaw
+INS.psi0 = deg2rad(360 - heading(range_start));  % yaw
 INS.theta0 = 0;  % pitch
 INS.phi0 = 0;  % roll
 % Rnb0 = [0, 1, 0; 1, 0, 0; 0, 0, -1];  % n-frame to original b-frame

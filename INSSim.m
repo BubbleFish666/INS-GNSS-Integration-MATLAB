@@ -14,25 +14,35 @@ VeloU = 0;  % m/s
 lat_GNSS = deg2rad(single(table2array(data(3:end,16))));  % deg -> rad
 lon_GNSS = deg2rad(single(table2array(data(3:end,17))));  % deg -> rad
 % IMU data
+% MTi-3
 gyrox = single(table2array(data(3:end,10)));  % rad/s
 gyroy = single(table2array(data(3:end,11)));  % rad/s
 gyroz = single(table2array(data(3:end,12)));  % rad/s
-faccx = single(table2array(data(3:end,7)));  % m/s^2
-faccy = single(table2array(data(3:end,8)));  % m/s^2
+% acceleration in x- and y- direction could have been swapped
+faccx = single(table2array(data(3:end,8)));  % m/s^2
+faccy = single(table2array(data(3:end,7)));  % m/s^2
 faccz = single(table2array(data(3:end,9)));  % m/s^2
+% MTi-7
+% accx = single(table2array(data(3:end,31)));  % m/s^2
+% accy = single(table2array(data(3:end,32)));  % m/s^2
+% accz = single(table2array(data(3:end,33)));  % m/s^2
 
 Yaw = single(table2array(data(3:end,15)));
 
 heading = single(table2array(data(3:end,25)));
 
 % set data range in time (seconds)
-% data_range = (22 <= t) & (t <= 35);
+data_range = (22 <= t) & (t <= 35);
+% data_range = (26 <= t) & (t <= 35);
 % data_range = (22 <= t) & (t <= 160);
-data_range = (65 <= t) & (t <= 75);
+% data_range = (65 <= t) & (t <= 75);
 % data_range = (109 <= t) & (t <= 120);
 % data_range = (144 <= t) & (t <= 160);
 % data_range = (169 <= t) & (t <= 177);
 
+range_start = find(data_range,1,'first');
+range_end = find(data_range,1,'last');
+k = range_start;
 
 %% initialize
 % time step (s)
@@ -40,12 +50,13 @@ T = 0.025;
 
 % initial orientation
 % Rnb = eye(3);
-psi0 = deg2rad(360 - 329.32);  % yaw
+% psi0 = deg2rad(360 - 150.16);  % yaw at 67.0 s
+psi0 = deg2rad(360 - 324.37);  % yaw at 26.0 s
 theta0 = 0;  % pitch
 phi0 = 0;  % roll
-% Rnb0 = [0, 1, 0; 1, 0, 0; 0, 0, -1];  % n-frame to original b-frame
+Rnb0 = [0, 1, 0; 1, 0, 0; 0, 0, -1];  % n-frame to original b-frame (original MTi sensor frame)
 % Rnb0 = [1, 0, 0; 0, -1, 0; 0, 0, -1];  % n-frame to original b-frame
-Rnb0 = [-1, 0, 0; 0, 1, 0; 0, 0, -1];  % n-frame to original b-frame
+% Rnb0 = [-1, 0, 0; 0, 1, 0; 0, 0, -1];  % n-frame to original b-frame
 Rb0b = R3(psi0)*R2(theta0)*R1(phi0);  % b-frame to original b-frame
 Rnb = Rnb0 * Rb0b;  % n-frame to b-frame
 
@@ -55,8 +66,10 @@ v_eb_n = [0; 0; 0];
 % initial latitude, longitude (degree) and height (m)
 % lat0 = single(deg2rad(48.1351));
 % lon0 = single(deg2rad(11.5820));
-lat0 = single(deg2rad(49.065972574));
-lon0 = single(deg2rad(9.260714896));
+% lat0 = single(deg2rad(49.065972574));
+% lon0 = single(deg2rad(9.260714896));
+lat0 = single(deg2rad(lat_GNSS(range_start)));
+lon0 = single(deg2rad(lon_GNSS(range_start)));
 h0 = 520;
 
 % earth rotational rate (rad/s)
@@ -67,7 +80,7 @@ omega_ie_n = w_ie * [0, sin(lat0), 0;
                      0, cos(lat0), 0];
 
 % assume gravity to be constant (m/s^2)
-g = -9.80743;
+g = [0; 0; -9.80743];
 
 % scale latutude and longitude
 llh_scale = 1e3;  % milli rad
@@ -75,10 +88,6 @@ lat0 = lat0 * llh_scale;
 lon0 = lon0 * llh_scale;
 
 %% strapdown solution
-range_start = find(data_range,1,'first');
-range_end = find(data_range,1,'last');
-k = range_start;
-
 % pre-allocate vectors for logging
 LOG.llh(1:range_end-range_start+1, 1:3) = nan;
 LOG.v_eb_n(1:range_end-range_start+1, 1:3) = nan;
@@ -109,6 +118,7 @@ while k <= range_end
     w_ibz_b = gyroz(k);
     % note that fAcc are already compensated by sensor with gravity
     f_ib_b = [faccx(k); faccy(k); faccz(k)];
+    % f_ib_b = [accx(k); accy(k); accz(k)];
 
     % rotation
     Rnb_ = Rnb;
@@ -121,6 +131,7 @@ while k <= range_end
     % velocity
     v_eb_n_ = v_eb_n;
     % v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b + g - cross(2 * Ren' * w_ie, v_eb_n)) * T;
+    % v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b + g) * T;
     v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b) * T;
     v_eb_n(3) = 0;  % disable velocity in Down direction
 
@@ -162,11 +173,11 @@ grid on
 hold on
 
 subplot(4,1,2);
-plot(t(data_range), LOG.v_eb_n(:, 1), t(data_range), LOG.v_eb_n(:, 2),...
+plot(t(data_range), LOG.v_eb_n(:, 1), '.', t(data_range), LOG.v_eb_n(:, 2), '.',...
      t(data_range), VeloN(data_range), t(data_range), VeloE(data_range),...
      t(data_range), LOG.v_eb_n(:, 3))
 title('velocity')
-legend('Vn INS', 'Ve INS', 'VeloN', 'VeloE', 'Vh')
+legend('Vn INS', 'Ve INS', 'Vn MTi7', 'Ve MTi7', 'Vh')
 % xticks(0:10:200)
 grid on
 hold on
