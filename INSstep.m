@@ -39,6 +39,7 @@ INS.lon_incre_total = INS.lon_incre_total + INS.lon_incre;
 INS.lon = INS.lon0 + INS.lon_incre_total;
 
 % logging
+% rotm2eul returns angles in yaw - pitch - roll order (rad)
 INS.eul = rotm2eul(INS.Rnb) * 180 / pi;
 LOG.INS.Rnb(k-range_start+1, :) = INS.eul;
 LOG.INS.Rb0b(k-range_start+1, :) = rotm2eul(INS.Rnb0'*INS.Rnb) * 180 / pi;

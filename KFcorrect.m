@@ -4,7 +4,8 @@
 KF.lat_GNSS_frac = GNSS.lat_GNSS(k) * llh_scale - INS.lat0_int;
 KF.lon_GNSS_frac = GNSS.lon_GNSS(k) * llh_scale - INS.lon0_int;
 KF.y = [KF.lat_GNSS_frac; KF.lon_GNSS_frac]...
-       - [INS.lat0_frac + INS.lat_incre_total; INS.lon0_frac + INS.lon_incre_total];
+     - [INS.lat0_frac + INS.lat_incre_total;
+        INS.lon0_frac + INS.lon_incre_total];
 KF.z_pre = [KF.dpsi_nb; KF.dv_eb_n; KF.dllh; KF.ba; KF.bg];
 
 % covariance of innovation
@@ -26,4 +27,13 @@ KF.bg = KF.z(13:15);
 % ba = [0; 0; 0];  % accelorometer error
 % bg = [0; 0; 0];  % gyro error
 
-KF.P = (eye(15) - KF.K * KF.H) * KF.P * (eye(15) - KF.K * KF.H)' + KF.K * KF.R * KF.K';
+KF.P = (eye(15) - KF.K * KF.H) * KF.P * (eye(15) - KF.K * KF.H)'...
+       + KF.K * KF.R * KF.K';
+
+%% logging
+LOG.KF.dpsi_nb(2 * (k - range_start + 1), :) = KF.dpsi_nb;
+LOG.KF.dv_eb_n(2 * (k - range_start + 1), :) = KF.dv_eb_n;
+LOG.KF.dllh(2 * (k - range_start + 1), :) = KF.dllh;
+LOG.KF.ba(2 * (k - range_start + 1), :) = KF.ba;
+LOG.KF.bg(2 * (k - range_start + 1), :) = KF.bg;
+LOG.KF.P{2 * (k - range_start + 1)} = KF.P;

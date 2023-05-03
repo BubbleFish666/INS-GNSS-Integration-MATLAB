@@ -15,10 +15,10 @@ KF.dv_eb_n = KF.dv_eb_n_ + KF.F21n * T * KF.dpsi_nb_...
 KF.dv_eb_n(3) = 0;  % disable velocity in Down direction
 
 % position
-KF.F32n = [1 / (meridionalRadius(INS.lat / llh_scale) + h), 0, 0;
-           0, 1 / ((transverseRadius(INS.lat / llh_scale) + h) * cos(INS.lat / llh_scale)), 0;
+KF.F32n = [1 * llh_scale / (meridionalRadius(INS.lat / llh_scale) + INS.h), 0, 0;
+           0, 1 * llh_scale / ((transverseRadius(INS.lat / llh_scale) + INS.h) * cos(INS.lat / llh_scale)), 0;
            0, 0, -1];
-KF.dllh = KF.dllh + KF.F32n * llh_scale * T * KF.dv_eb_n_;
+KF.dllh = KF.dllh + KF.F32n * T * KF.dv_eb_n_;
 KF.dllh(3) = 0;  % disable height
 
 % covariance of estimate
@@ -28,3 +28,11 @@ KF.PHI = [eye(3), zeros(3), zeros(3), zeros(3), INS.Rnb * T;
           zeros(3), zeros(3), zeros(3), eye(3), zeros(3);
           zeros(3), zeros(3), zeros(3), zeros(3), eye(3)];
 KF.P = KF.PHI * KF.P * KF.PHI' + KF.Q;
+
+%% logging
+LOG.KF.dpsi_nb(2 * (k - range_start) + 1, :) = KF.dpsi_nb;
+LOG.KF.dv_eb_n(2 * (k - range_start) + 1, :) = KF.dv_eb_n;
+LOG.KF.dllh(2 * (k - range_start) + 1, :) = KF.dllh;
+LOG.KF.ba(2 * (k - range_start) + 1, :) = KF.ba;
+LOG.KF.bg(2 * (k - range_start) + 1, :) = KF.bg;
+LOG.KF.P{2 * (k - range_start) + 1} = KF.P;
