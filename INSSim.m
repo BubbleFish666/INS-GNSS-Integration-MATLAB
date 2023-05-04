@@ -19,8 +19,8 @@ gyrox = single(table2array(data(3:end,10)));  % rad/s
 gyroy = single(table2array(data(3:end,11)));  % rad/s
 gyroz = single(table2array(data(3:end,12)));  % rad/s
 % acceleration in x- and y- direction could have been swapped
-faccx = single(table2array(data(3:end,8)));  % m/s^2
-faccy = single(table2array(data(3:end,7)));  % m/s^2
+faccx = single(table2array(data(3:end,7)));  % m/s^2
+faccy = single(table2array(data(3:end,8)));  % m/s^2
 faccz = single(table2array(data(3:end,9)));  % m/s^2
 % MTi-7
 % accx = single(table2array(data(3:end,31)));  % m/s^2
@@ -54,9 +54,9 @@ T = 0.025;
 psi0 = deg2rad(360 - 324.37);  % yaw at 26.0 s
 theta0 = 0;  % pitch
 phi0 = 0;  % roll
-Rnb0 = [0, 1, 0; 1, 0, 0; 0, 0, -1];  % n-frame to original b-frame (original MTi sensor frame)
+% Rnb0 = [0, 1, 0; 1, 0, 0; 0, 0, -1];  % n-frame to original b-frame (original MTi sensor frame)
 % Rnb0 = [1, 0, 0; 0, -1, 0; 0, 0, -1];  % n-frame to original b-frame
-% Rnb0 = [-1, 0, 0; 0, 1, 0; 0, 0, -1];  % n-frame to original b-frame
+Rnb0 = [-1, 0, 0; 0, 1, 0; 0, 0, -1];  % n-frame to original b-frame
 Rb0b = R3(psi0)*R2(theta0)*R1(phi0);  % b-frame to original b-frame
 Rnb = Rnb0 * Rb0b;  % n-frame to b-frame
 
@@ -68,8 +68,8 @@ v_eb_n = [0; 0; 0];
 % lon0 = single(deg2rad(11.5820));
 % lat0 = single(deg2rad(49.065972574));
 % lon0 = single(deg2rad(9.260714896));
-lat0 = single(deg2rad(lat_GNSS(range_start)));
-lon0 = single(deg2rad(lon_GNSS(range_start)));
+lat0 = single(lat_GNSS(range_start));
+lon0 = single(lon_GNSS(range_start));
 h0 = 520;
 
 % earth rotational rate (rad/s)
@@ -104,8 +104,8 @@ lat_incre_total = 0;
 lon_incre_total = 0;
 lat = lat0;
 lon = lon0;
-lat0_int = single(int32(lat0));
-lon0_int = single(int32(lon0));
+lat0_int = single(floor(lat0));
+lon0_int = single(floor(lon0));
 lat0_frac = lat0 - lat0_int;
 lon0_frac = lon0 - lon0_int;
 
@@ -163,6 +163,8 @@ while k <= range_end
 end
 
 %% plot
+close all;
+
 subplot(4,1,1);
 plot(t(data_range), LOG.Rb0b(:, 1), t(data_range), Yaw(data_range)+116.7026,...
      t(data_range), 360-heading(data_range))
@@ -183,17 +185,33 @@ grid on
 hold on
 
 subplot(4,1,3);
-plot(t(data_range), LOG.llh_incre_total(:,1) + lat0_frac - (lat_GNSS(data_range) * llh_scale - lat0_int))
+plot(t(data_range), LOG.llh_incre_total(:,1) + lat0_frac)
 title('position')
-legend('lat (milli rad)')
+legend('lat frac (milli rad)')
 % xticks(0:10:200)
 grid on
 hold on
 
 subplot(4,1,4);
-plot(t(data_range), LOG.llh_incre_total(:,2) + lon0_frac - (lon_GNSS(data_range) * llh_scale - lon0_int))
+plot(t(data_range), LOG.llh_incre_total(:,2) + lon0_frac)
 title('position')
-legend('lon (milli rad)')
+legend('lon frac (milli rad)')
 % xticks(0:10:200)
 grid on
 hold on
+
+% subplot(4,1,3);
+% plot(t(data_range), LOG.llh_incre_total(:,1) + lat0_frac - (lat_GNSS(data_range) * llh_scale - lat0_int))
+% title('position')
+% legend('lat (milli rad)')
+% % xticks(0:10:200)
+% grid on
+% hold on
+% 
+% subplot(4,1,4);
+% plot(t(data_range), LOG.llh_incre_total(:,2) + lon0_frac - (lon_GNSS(data_range) * llh_scale - lon0_int))
+% title('position')
+% legend('lon (milli rad)')
+% % xticks(0:10:200)
+% grid on
+% hold on

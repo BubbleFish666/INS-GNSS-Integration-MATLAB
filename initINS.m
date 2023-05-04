@@ -15,8 +15,10 @@ INS.v_eb_n = [0; 0; 0];
 % initial latitude, longitude (degree) and height (m)
 % lat0 = single(deg2rad(48.1351));  % lat Munich
 % lon0 = single(deg2rad(11.5820));  % lon Munich
-INS.lat0 = single(deg2rad(49.065972574));
-INS.lon0 = single(deg2rad(9.260714896));
+% INS.lat0 = single(49.065972574);
+% INS.lon0 = single(9.260714896);
+INS.lat0 = single(GNSS.lat_GNSS(range_start));
+INS.lon0 = single(GNSS.lon_GNSS(range_start));
 INS.h0 = 520;  % height Munich
 % scale latutude and longitude
 llh_scale = 1e3;  % milli rad
@@ -27,8 +29,8 @@ INS.lat_incre_total = 0;
 INS.lon_incre_total = 0;
 INS.lat = INS.lat0;
 INS.lon = INS.lon0;
-INS.lat0_int = single(int32(INS.lat0));
-INS.lon0_int = single(int32(INS.lon0));
+INS.lat0_int = single(floor(INS.lat0));
+INS.lon0_int = single(floor(INS.lon0));
 INS.lat0_frac = INS.lat0 - INS.lat0_int;
 INS.lon0_frac = INS.lon0 - INS.lon0_int;
 
