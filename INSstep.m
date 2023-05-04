@@ -1,9 +1,10 @@
 % read data from IMU
-INS.w_ibx_b = IMU.gyrox(k);
-INS.w_iby_b = IMU.gyroy(k);
-INS.w_ibz_b = IMU.gyroz(k);
+INS.w_ib_b = INS.R_board_sensor * [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)];
+INS.w_ibx_b = INS.w_ib_b(1);
+INS.w_iby_b = INS.w_ib_b(2);
+INS.w_ibz_b = INS.w_ib_b(3);
 % note that fAcc are already compensated by sensor with gravity
-INS.f_ib_b = [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
+INS.f_ib_b = INS.R_board_sensor * [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
 
 % rotation
 INS.Rnb_ = INS.Rnb;
@@ -41,8 +42,16 @@ INS.lon = INS.lon0 + INS.lon_incre_total;
 % logging
 % rotm2eul returns angles in yaw - pitch - roll order (rad)
 INS.eul = rotm2eul(INS.Rnb) * 180 / pi;
+if INS.eul(1) < 0
+    INS.eul(1) = INS.eul(1) + 360;
+end
 LOG.INS.Rnb(k-range_start+1, :) = INS.eul;
-LOG.INS.Rb0b(k-range_start+1, :) = rotm2eul(INS.Rnb0'*INS.Rnb) * 180 / pi;
+
+INS.Rb0b = rotm2eul(INS.Rnb0'*INS.Rnb) * 180 / pi;
+if INS.Rb0b(1) < 0
+    INS.Rb0b(1) = INS.Rb0b(1) + 360;
+end
+LOG.INS.Rb0b(k-range_start+1, :) = INS.Rb0b;
 LOG.INS.v_eb_n(k-range_start+1, :) = INS.v_eb_n;
 LOG.INS.llh(k-range_start+1, :) = [INS.lat, INS.lon, INS.h];
 LOG.INS.llh_incre_total(k-range_start+1, :) = [INS.lat_incre_total, INS.lon_incre_total, 0];

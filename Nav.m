@@ -21,6 +21,7 @@ IMU.faccy = single(table2array(data(3:end,8)));  % m/s^2
 IMU.faccz = single(table2array(data(3:end,9)));  % m/s^2
 
 Yaw = single(table2array(data(3:end,15)));
+YawOffset = 121.6556;
 Pitch = single(table2array(data(3:end,14)));
 Roll = single(table2array(data(3:end,13)));
 
@@ -83,7 +84,7 @@ figure('Name', 'roll-pitch-yaw')
 subplot(3, 1, 1)
 hold on
 grid on
-plot(t(data_range), LOG.INS.Rb0b(:, 1), t(data_range), Yaw(data_range) + 99.88)
+plot(t(data_range), LOG.INS.Rb0b(:, 1), t(data_range), Yaw(data_range) + YawOffset)
 legend('INS-yaw', 'sensor-yaw')
 
 subplot(3, 1, 2)
@@ -101,11 +102,10 @@ legend('INS-roll', 'sensor-roll')
 % INS
 figure('Name', 'INS')
 subplot(4,1,1);
-plot(t(data_range), LOG.INS.Rb0b(:, 1), t(data_range), Yaw(data_range) + 99.88,...
+plot(t(data_range), LOG.INS.Rb0b(:, 1), t(data_range), Yaw(data_range) + YawOffset,...
      t(data_range), 360-heading(data_range))
 title('yaw')
 legend('INS-yaw', 'sensor-yaw')
-% xticks(0:10:200)
 grid on
 hold on
 
@@ -115,7 +115,6 @@ plot(t(data_range), LOG.INS.v_eb_n(:, 1), '.', t(data_range), LOG.INS.v_eb_n(:, 
      t(data_range), LOG.INS.v_eb_n(:, 3))
 title('velocity')
 legend('Vn INS', 'Ve INS', 'Vn MTi7', 'Ve MTi7', 'Vh')
-% xticks(0:10:200)
 grid on
 hold on
 
@@ -123,7 +122,6 @@ subplot(4,1,3);
 plot(t(data_range), LOG.INS.llh_incre_total(:,1) + INS.lat0_frac - (GNSS.lat_GNSS(data_range) * llh_scale - INS.lat0_int))
 title('position')
 legend('lat (milli rad)')
-% xticks(0:10:200)
 grid on
 hold on
 
@@ -131,7 +129,6 @@ subplot(4,1,4);
 plot(t(data_range), LOG.INS.llh_incre_total(:,2) + INS.lon0_frac - (GNSS.lon_GNSS(data_range) * llh_scale - INS.lon0_int))
 title('position')
 legend('lon (milli rad)')
-% xticks(0:10:200)
 grid on
 hold on
 
@@ -140,44 +137,87 @@ figure('Name', 'navigation states error KF')
 subplot(3, 1, 1)
 hold on
 grid on
-plot(rad2deg(LOG.KF.dpsi_nb(:, 1)))
-plot(rad2deg(LOG.KF.dpsi_nb(:, 2)))
-plot(rad2deg(LOG.KF.dpsi_nb(:, 3)))
+plot(t(data_range), rad2deg(LOG.KF.dpsi_nb(:, 1)))
+plot(t(data_range), rad2deg(LOG.KF.dpsi_nb(:, 2)))
+plot(t(data_range), rad2deg(LOG.KF.dpsi_nb(:, 3)))
 legend('d roll', 'd pitch', 'd yaw')
 ylabel('deg')
 
 subplot(3, 1, 2)
 hold on
 grid on
-plot(LOG.KF.dv_eb_n(:, 1))
-plot(LOG.KF.dv_eb_n(:, 2))
-plot(LOG.KF.dv_eb_n(:, 3))
+plot(t(data_range), LOG.KF.dv_eb_n(:, 1))
+plot(t(data_range), LOG.KF.dv_eb_n(:, 2))
+plot(t(data_range), LOG.KF.dv_eb_n(:, 3))
 legend('d vn', 'd ne', 'd vd')
 
 subplot(3, 1, 3)
 hold on
 grid on
-plot(LOG.KF.dllh(:, 1))
-plot(LOG.KF.dllh(:, 2))
-plot(LOG.KF.dllh(:, 3))
+plot(t(data_range), LOG.KF.dllh(:, 1))
+plot(t(data_range), LOG.KF.dllh(:, 2))
+plot(t(data_range), LOG.KF.dllh(:, 3))
 legend('d lat', 'd lon', 'd h')
 
 figure('Name', 'IMU sensor error KF')
 subplot(2, 1, 1)
 hold on
 grid on
-plot(LOG.KF.ba(:, 1))
-plot(LOG.KF.ba(:, 2))
-plot(LOG.KF.ba(:, 3))
+plot(t(data_range), LOG.KF.ba(:, 1))
+plot(t(data_range), LOG.KF.ba(:, 2))
+plot(t(data_range), LOG.KF.ba(:, 3))
 legend('ba x', 'ba y', 'ba z')
 
 subplot(2, 1, 2)
 hold on
 grid on
-plot(LOG.KF.bg(:, 1))
-plot(LOG.KF.bg(:, 2))
-plot(LOG.KF.bg(:, 3))
+plot(t(data_range), LOG.KF.bg(:, 1))
+plot(t(data_range), LOG.KF.bg(:, 2))
+plot(t(data_range), LOG.KF.bg(:, 3))
 legend('bg x', 'bg y', 'bg z')
+
+% figure('Name', 'navigation states error KF')
+% subplot(3, 1, 1)
+% hold on
+% grid on
+% plot(rad2deg(LOG.KF.dpsi_nb(:, 1)))
+% plot(rad2deg(LOG.KF.dpsi_nb(:, 2)))
+% plot(rad2deg(LOG.KF.dpsi_nb(:, 3)))
+% legend('d roll', 'd pitch', 'd yaw')
+% ylabel('deg')
+% 
+% subplot(3, 1, 2)
+% hold on
+% grid on
+% plot(LOG.KF.dv_eb_n(:, 1))
+% plot(LOG.KF.dv_eb_n(:, 2))
+% plot(LOG.KF.dv_eb_n(:, 3))
+% legend('d vn', 'd ne', 'd vd')
+% 
+% subplot(3, 1, 3)
+% hold on
+% grid on
+% plot(LOG.KF.dllh(:, 1))
+% plot(LOG.KF.dllh(:, 2))
+% plot(LOG.KF.dllh(:, 3))
+% legend('d lat', 'd lon', 'd h')
+% 
+% figure('Name', 'IMU sensor error KF')
+% subplot(2, 1, 1)
+% hold on
+% grid on
+% plot(LOG.KF.ba(:, 1))
+% plot(LOG.KF.ba(:, 2))
+% plot(LOG.KF.ba(:, 3))
+% legend('ba x', 'ba y', 'ba z')
+% 
+% subplot(2, 1, 2)
+% hold on
+% grid on
+% plot(LOG.KF.bg(:, 1))
+% plot(LOG.KF.bg(:, 2))
+% plot(LOG.KF.bg(:, 3))
+% legend('bg x', 'bg y', 'bg z')
 
 % figure('Name', 'P')
 % plot(k)

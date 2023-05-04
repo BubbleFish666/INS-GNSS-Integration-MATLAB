@@ -1,12 +1,13 @@
 % initial orientation
 % Rnb = eye(3);
-INS.psi0 = deg2rad(360 - heading(range_start));  % yaw
+% INS.psi0 = deg2rad(360 - heading(range_start));  % yaw
+INS.psi0 = deg2rad(360 - 324.37);  % yaw at 26.0 s
 INS.theta0 = 0;  % pitch
 INS.phi0 = 0;  % roll
-% Rnb0 = [0, 1, 0; 1, 0, 0; 0, 0, -1];  % n-frame to original b-frame
-% Rnb0 = [1, 0, 0; 0, -1, 0; 0, 0, -1];  % n-frame to original b-frame
-INS.Rnb0 = [-1, 0, 0; 0, 1, 0; 0, 0, -1];  % n-frame to original b-frame
-INS.Rb0b = R3(INS.psi0)*R2(INS.theta0)*R1(INS.phi0);  % b-frame to original b-frame
+% MTi-3 frame is rotated about z-axis by -88.75 (or -59) deg (probably due to disabling the magnetometer)
+INS.R_board_sensor = R3(deg2rad(-59));  % MTi-3 board frame to sensor frame
+INS.Rnb0 = R3(0.5 * pi) * R1(pi);  % n-frame to MTi-3 board frame (body frame)
+INS.Rb0b = R3(INS.psi0)*R2(INS.theta0)*R1(INS.phi0);  % align yaw of MTi-3 frame to actual heading
 INS.Rnb = INS.Rnb0 * INS.Rb0b;  % n-frame to b-frame
 
 % initial velocity

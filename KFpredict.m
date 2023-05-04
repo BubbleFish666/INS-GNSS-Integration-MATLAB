@@ -30,9 +30,9 @@ KF.PHI = [eye(3), zeros(3), zeros(3), zeros(3), INS.Rnb * T;
 KF.P = KF.PHI * KF.P * KF.PHI' + KF.Q;
 
 %% logging
-LOG.KF.dpsi_nb(2 * (k - range_start) + 1, :) = KF.dpsi_nb;
-LOG.KF.dv_eb_n(2 * (k - range_start) + 1, :) = KF.dv_eb_n;
-LOG.KF.dllh(2 * (k - range_start) + 1, :) = KF.dllh;
-LOG.KF.ba(2 * (k - range_start) + 1, :) = KF.ba;
-LOG.KF.bg(2 * (k - range_start) + 1, :) = KF.bg;
-LOG.KF.P{2 * (k - range_start) + 1} = KF.P;
+% LOG.KF.dpsi_nb(2 * (k - range_start) + 1, :) = KF.dpsi_nb;
+% LOG.KF.dv_eb_n(2 * (k - range_start) + 1, :) = KF.dv_eb_n;
+% LOG.KF.dllh(2 * (k - range_start) + 1, :) = KF.dllh;
+% LOG.KF.ba(2 * (k - range_start) + 1, :) = KF.ba;
+% LOG.KF.bg(2 * (k - range_start) + 1, :) = KF.bg;
+% LOG.KF.P{2 * (k - range_start) + 1} = KF.P;

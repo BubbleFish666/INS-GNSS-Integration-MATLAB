@@ -31,9 +31,22 @@ KF.P = (eye(15) - KF.K * KF.H) * KF.P * (eye(15) - KF.K * KF.H)'...
        + KF.K * KF.R * KF.K';
 
 %% logging
-LOG.KF.dpsi_nb(2 * (k - range_start + 1), :) = KF.dpsi_nb;
-LOG.KF.dv_eb_n(2 * (k - range_start + 1), :) = KF.dv_eb_n;
-LOG.KF.dllh(2 * (k - range_start + 1), :) = KF.dllh;
-LOG.KF.ba(2 * (k - range_start + 1), :) = KF.ba;
-LOG.KF.bg(2 * (k - range_start + 1), :) = KF.bg;
-LOG.KF.P{2 * (k - range_start + 1)} = KF.P;
+% LOG.KF.dpsi_nb(2 * (k - range_start + 1), :) = KF.dpsi_nb;
+% LOG.KF.dv_eb_n(2 * (k - range_start + 1), :) = KF.dv_eb_n;
+% LOG.KF.dllh(2 * (k - range_start + 1), :) = KF.dllh;
+% LOG.KF.ba(2 * (k - range_start + 1), :) = KF.ba;
+% LOG.KF.bg(2 * (k - range_start + 1), :) = KF.bg;
+% LOG.KF.P{2 * (k - range_start + 1)} = KF.P;
+
+LOG.KF.dpsi_nb(k - range_start + 1, :) = KF.dpsi_nb;
+LOG.KF.dv_eb_n(k - range_start + 1, :) = KF.dv_eb_n;
+LOG.KF.dllh(k - range_start + 1, :) = KF.dllh;
+LOG.KF.ba(k - range_start + 1, :) = KF.ba;
+LOG.KF.bg(k - range_start + 1, :) = KF.bg;
+LOG.KF.P{k - range_start + 1} = KF.P;
+
+% LOG.INScorrected.v_eb_n(1:range_end-range_start+1, :) = INS.v_eb_n + KF.dv_eb_n;
+% LOG.INScorrected.Rnb(1:range_end-range_start+1, 1:3) = nan;
+% LOG.INScorrected.Rb0b(1:range_end-range_start+1, 1:3) = nan;
+% LOG.INScorrected.llh_incre_total(1:range_end-range_start+1, 1:3) = nan;
+% LOG.INScorrected.llh_incre(1:range_end-range_start+1, 1:3) = nan;
