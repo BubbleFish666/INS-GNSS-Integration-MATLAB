@@ -29,11 +29,12 @@ heading = single(table2array(data(3:end,25)));
 
 % set data range in time (seconds)
 % data_range = (22 <= t) & (t <= 35);
-data_range = (22 <= t) & (t <= 160);
+% data_range = (22 <= t) & (t <= 160);
 % data_range = (65 <= t) & (t <= 75);
 % data_range = (109 <= t) & (t <= 120);
 % data_range = (144 <= t) & (t <= 160);
 % data_range = (169 <= t) & (t <= 177);
+data_range = (8 <= t) & (t <= 160);
 
 
 %% initialize
@@ -84,25 +85,25 @@ figure('Name', 'roll-pitch-yaw')
 subplot(3, 1, 1)
 hold on
 grid on
-plot(t(data_range), LOG.INS.Rb0b(:, 1), t(data_range), Yaw(data_range) + YawOffset)
+plot(t(data_range), LOG.INS.eul_b0b(:, 1), t(data_range), Yaw(data_range) + YawOffset)
 legend('INS-yaw', 'sensor-yaw')
 
 subplot(3, 1, 2)
 hold on
 grid on
-plot(t(data_range), LOG.INS.Rb0b(:, 2), t(data_range), Pitch(data_range))
+plot(t(data_range), LOG.INS.eul_b0b(:, 2), t(data_range), Pitch(data_range))
 legend('INS-pitch', 'sensor-pitch')
 
 subplot(3, 1, 3)
 hold on
 grid on
-plot(t(data_range), LOG.INS.Rb0b(:, 3), t(data_range), Roll(data_range))
+plot(t(data_range), LOG.INS.eul_b0b(:, 3), t(data_range), Roll(data_range))
 legend('INS-roll', 'sensor-roll')
 
 % INS
 figure('Name', 'INS')
 subplot(4,1,1);
-plot(t(data_range), LOG.INS.Rb0b(:, 1), t(data_range), Yaw(data_range) + YawOffset,...
+plot(t(data_range), LOG.INS.eul_b0b(:, 1), t(data_range), Yaw(data_range) + YawOffset,...
      t(data_range), 360-heading(data_range))
 title('yaw')
 legend('INS-yaw', 'sensor-yaw')
@@ -175,6 +176,47 @@ plot(t(data_range), LOG.KF.bg(:, 1))
 plot(t(data_range), LOG.KF.bg(:, 2))
 plot(t(data_range), LOG.KF.bg(:, 3))
 legend('bg x', 'bg y', 'bg z')
+
+% INS corrected
+figure('Name', 'INS corrected')
+subplot(4,1,1);
+plot(t(data_range), LOG.INS.eul_b0b_corrected(:, 1),...
+     t(data_range), Yaw(data_range) + YawOffset,...
+     t(data_range), 360-heading(data_range))
+title('yaw')
+legend('INS-corrected yaw', 'sensor yaw', 'MTi-7 yaw')
+grid on
+hold on
+
+subplot(4,1,2);
+plot(t(data_range), LOG.INS.v_eb_n_corrected(:, 1), '.',...
+     t(data_range), LOG.INS.v_eb_n_corrected(:, 2), '.',...
+     t(data_range), MTi7.VeloN(data_range),...
+     t(data_range), MTi7.VeloE(data_range),...
+     t(data_range), LOG.INS.v_eb_n_corrected(:, 3))
+title('velocity')
+legend('Vn INS corrected', 'Ve INS corrected', 'Vn MTi7', 'Ve MTi7', 'Vh corrected')
+ylim([-4 4])
+grid on
+hold on
+
+subplot(4,1,3);
+plot(t(data_range),...
+     LOG.INS.llh_incre_total_corrected(:,1) + INS.lat0_frac...
+     - (GNSS.lat_GNSS(data_range) * llh_scale - INS.lat0_int))
+title('position')
+legend('lat (milli rad)')
+grid on
+hold on
+
+subplot(4,1,4);
+plot(t(data_range),...
+     LOG.INS.llh_incre_total_corrected(:,2) + INS.lon0_frac...
+     - (GNSS.lon_GNSS(data_range) * llh_scale - INS.lon0_int))
+title('position')
+legend('lon (milli rad)')
+grid on
+hold on
 
 % figure('Name', 'navigation states error KF')
 % subplot(3, 1, 1)

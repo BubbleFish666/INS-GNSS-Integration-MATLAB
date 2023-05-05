@@ -1,5 +1,6 @@
 % error states
 KF.dpsi_nb = [0; 0; 0];  % attitude error (rad) numerical issue?
+KF.Rnn = zeros(3);
 KF.dv_eb_n = [0; 0; 0];  % velocity error (m/s)
 KF.dllh = [0; 0; 0];  % position error (milli rad)
 KF.ba = [0; 0; 0];  % accelorometer error (m/s^2)
