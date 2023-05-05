@@ -2,6 +2,7 @@
 % attitude
 KF.dpsi_nb_ = KF.dpsi_nb;
 KF.dpsi_nb = KF.dpsi_nb_ + INS.Rnb * T * KF.bg;
+KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
 
 % velocity
 KF.dv_eb_n_ = KF.dv_eb_n;

@@ -16,6 +16,7 @@ KF.K = KF.P * KF.H' * KF.S^(-1);
 KF.z = KF.z_pre + KF.K * (KF.y - KF.H * KF.z_pre);
 
 KF.dpsi_nb = KF.z(1:3);
+KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
 KF.dv_eb_n = KF.z(4:6);
 KF.dllh = KF.z(7:9);
 KF.ba = KF.z(10:12);
@@ -29,6 +30,22 @@ KF.bg = KF.z(13:15);
 
 KF.P = (eye(15) - KF.K * KF.H) * KF.P * (eye(15) - KF.K * KF.H)'...
        + KF.K * KF.R * KF.K';
+
+% correct the INS
+INS.llh_incre_total_corrected = [INS.lat_incre_total + KF.dllh(1);
+                                 INS.lon_incre_total + KF.dllh(2);
+                                 0];
+INS.llh_corrected = [INS.lat0 + INS.llh_incre_total_corrected(1);
+                     INS.lon0 + INS.llh_incre_total_corrected(2);
+                     0];
+
+INS.v_eb_n_corrected = INS.v_eb_n + KF.dv_eb_n;
+
+INS.eul_nb_corrected = rotm2eul(KF.Rnn * INS.Rnb) * 180 / pi;
+INS.eul_nb_corrected(1) = changeDegRange360(INS.eul_nb_corrected(1));
+
+INS.eul_b0b_corrected = rotm2eul(INS.Rnb0' * KF.Rnn * INS.Rnb) * 180 / pi;
+INS.eul_b0b_corrected(1) = changeDegRange360(INS.eul_b0b_corrected(1));
 
 %% logging
 % LOG.KF.dpsi_nb(2 * (k - range_start + 1), :) = KF.dpsi_nb;
@@ -45,8 +62,9 @@ LOG.KF.ba(k - range_start + 1, :) = KF.ba;
 LOG.KF.bg(k - range_start + 1, :) = KF.bg;
 LOG.KF.P{k - range_start + 1} = KF.P;
 
-% LOG.INScorrected.v_eb_n(1:range_end-range_start+1, :) = INS.v_eb_n + KF.dv_eb_n;
-% LOG.INScorrected.Rnb(1:range_end-range_start+1, 1:3) = nan;
-% LOG.INScorrected.Rb0b(1:range_end-range_start+1, 1:3) = nan;
-% LOG.INScorrected.llh_incre_total(1:range_end-range_start+1, 1:3) = nan;
-% LOG.INScorrected.llh_incre(1:range_end-range_start+1, 1:3) = nan;
+% INS corrected
+LOG.INS.eul_nb_corrected(k - range_start + 1, :) = INS.eul_nb_corrected;
+LOG.INS.eul_b0b_corrected(k - range_start + 1, :) = INS.eul_b0b_corrected;
+LOG.INS.v_eb_n_corrected(k - range_start + 1, :) = INS.v_eb_n_corrected;
+LOG.INS.llh_incre_total_corrected(k - range_start + 1, :) = INS.llh_incre_total_corrected;
+LOG.INS.llh_corrected(k - range_start + 1, :) = INS.llh_corrected;

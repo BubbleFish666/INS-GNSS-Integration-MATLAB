@@ -33,9 +33,9 @@ YawOffset = 0;
 heading = single(table2array(data(3:end,25)));
 
 % set data range in time (seconds)
-data_range = (22 <= t) & (t <= 35);
+% data_range = (22 <= t) & (t <= 35);
 % data_range = (26 <= t) & (t <= 35);
-% data_range = (22 <= t) & (t <= 160);
+data_range = (22 <= t) & (t <= 160);
 % data_range = (65 <= t) & (t <= 75);
 % data_range = (109 <= t) & (t <= 120);
 % data_range = (144 <= t) & (t <= 160);
@@ -93,8 +93,8 @@ lon0 = lon0 * llh_scale;
 % pre-allocate vectors for logging
 LOG.llh(1:range_end-range_start+1, 1:3) = nan;
 LOG.v_eb_n(1:range_end-range_start+1, 1:3) = nan;
-LOG.Rnb(1:range_end-range_start+1, 1:3) = nan;
-LOG.Rb0b(1:range_end-range_start+1, 1:3) = nan;
+% LOG.Rnb(1:range_end-range_start+1, 1:3) = nan;
+LOG.eul_b0b(1:range_end-range_start+1, 1:3) = nan;
 LOG.llh_incre_total(1:range_end-range_start+1, 1:3) = nan;
 LOG.llh_incre(1:range_end-range_start+1, 1:3) = nan;
 
@@ -138,7 +138,8 @@ while k <= range_end
     v_eb_n_ = v_eb_n;
     % v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b + g - cross(2 * Ren' * w_ie, v_eb_n)) * T;
     % v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b + g) * T;
-    v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b) * T;
+    % v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b) * T;
+    v_eb_n = v_eb_n_ + Rnb0 * f_ib_b * T;
     v_eb_n(3) = 0;  % disable velocity in Down direction
 
     % position
@@ -155,9 +156,14 @@ while k <= range_end
     lon = lon0 + lon_incre_total;
 
     % logging
-    eul = rotm2eul(Rnb) * 180 / pi;
-    LOG.Rnb(k-range_start+1, :) = eul;
-    LOG.Rb0b(k-range_start+1, :) = rotm2eul(Rnb0'*Rnb) * 180 / pi;
+    eul_nb = rotm2eul(Rnb) * 180 / pi;
+    eul_nb(1) = changeDegRange360(eul_nb(1));
+    LOG.eul_nb(k-range_start+1, :) = eul_nb;
+    
+    eul_b0b = rotm2eul(Rnb0'*Rnb) * 180 / pi;
+    eul_b0b(1) = changeDegRange360(eul_b0b(1));
+    LOG.eul_b0b(k-range_start+1, :) = eul_b0b;
+
     LOG.v_eb_n(k-range_start+1, :) = v_eb_n;
     LOG.llh(k-range_start+1, :) = [lat, lon, h];
     LOG.llh_incre_total(k-range_start+1, :) = [lat_incre_total, lon_incre_total, 0];
@@ -172,7 +178,7 @@ end
 close all;
 
 subplot(4,1,1);
-plot(t(data_range), LOG.Rb0b(:, 1), t(data_range), Yaw(data_range) + YawOffset,...
+plot(t(data_range), LOG.eul_b0b(:, 1), t(data_range), Yaw(data_range) + YawOffset,...
      t(data_range), 360-heading(data_range))
 title('yaw')
 legend('INS-yaw', 'sensor-yaw')
