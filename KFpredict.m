@@ -6,7 +6,7 @@ KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
 
 % velocity
 KF.dv_eb_n_ = KF.dv_eb_n;
-KF.f_ib_n = INS.Rnb * INS.f_ib_b;
+KF.f_ib_n = INS.Rnb0 * INS.f_ib_b0;
 KF.F21n = [0, KF.f_ib_n(3), -KF.f_ib_n(2);
            -KF.f_ib_n(3), 0, KF.f_ib_n(1);
            KF.f_ib_n(2), -KF.f_ib_n(1), 0];

@@ -4,7 +4,11 @@ INS.w_ibx_b = INS.w_ib_b(1);
 INS.w_iby_b = INS.w_ib_b(2);
 INS.w_ibz_b = INS.w_ib_b(3);
 % note that fAcc are already compensated by sensor with gravity
-INS.f_ib_b = INS.R_board_sensor * [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
+% It seems that MTi-3 frame is a global floating frame,
+% which means sensor data are measured in that global frame.
+% With facc multiplied by R_board_sensor (a quasi constant orientation
+% offset), f_ib_b0 represents the acc measured in b0 frame.
+INS.f_ib_b0 = INS.R_board_sensor * [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
 
 %% strapdown solution
 % rotation
@@ -25,7 +29,7 @@ INS.v_eb_n_ = INS.v_eb_n;
 % INS.v_eb_n = INS.v_eb_n_ + (INS.Rnb_ * INS.f_ib_b) * T;
 % eul_tem = rotm2eul(INS.Rnb0' * INS.Rnb_);
 % INS.v_eb_n = INS.v_eb_n_ + (INS.Rnb0 * R3(eul_tem(1)) * INS.f_ib_b) * T;
-INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0 * INS.f_ib_b * T;
+INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0 * INS.f_ib_b0 * T;
 INS.v_eb_n(3) = 0;  % disable velocity in Down direction
 
 % position

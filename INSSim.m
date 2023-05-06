@@ -57,8 +57,8 @@ theta0 = 0;  % pitch
 phi0 = 0;  % roll
 
 % MTi-3 frame is rotated about z-axis by -88.75 (or -59) deg (probably due to disabling the magnetometer)
-R_board_sensor = R3(deg2rad(-59));  % MTi-3 board frame to sensor frame
-Rnb0 = R3(0.5 * pi) * R1(pi);  % n-frame to MTi-3 board frame (body frame)
+R_board_sensor = R3(deg2rad(-59));  % original MTi-3 board frame (ENU) to sensor frame
+Rnb0 = R3(0.5 * pi) * R1(pi);  % n-frame to original MTi-3 board frame (body frame)
 Rb0b = R3(psi0)*R2(theta0)*R1(phi0);  % align yaw of MTi-3 frame to actual heading
 Rnb = Rnb0 * Rb0b;  % n-frame to b-frame
 
@@ -118,15 +118,21 @@ while k <= range_end
     % w_ibx_b = gyrox(k);
     % w_iby_b = gyroy(k);
     % w_ibz_b = gyroz(k);
-    w_ib_b = R_board_sensor * [gyrox(k); gyroy(k); gyroz(k)];
-    w_ibx_b = w_ib_b(1);
-    w_iby_b = w_ib_b(2);
-    w_ibz_b = w_ib_b(3);
+    w_ib_b0 = R_board_sensor * [gyrox(k); gyroy(k); gyroz(k)];
     % note that fAcc are already compensated by sensor with gravity
-    f_ib_b = R_board_sensor * [faccx(k); faccy(k); faccz(k)];
+    % It seems that MTi-3 frame is a global floating frame,
+    % which means sensor data are measured in that global frame.
+    % With facc multiplied by R_board_sensor (a quasi constant orientation
+    % offset), f_ib_b0 represents the acc measured in b0 frame.
+    f_ib_b0 = R_board_sensor * [faccx(k); faccy(k); faccz(k)];
     % f_ib_b = [accx(k); accy(k); accz(k)];
 
     % rotation
+    Rb0b = Rnb0' * Rnb;
+    w_ib_b = Rb0b' * w_ib_b0;
+    w_ibx_b = w_ib_b(1);
+    w_iby_b = w_ib_b(2);
+    w_ibz_b = w_ib_b(3);
     Rnb_ = Rnb;
     omega_ib_b = [0, -w_ibz_b, w_iby_b;
                   w_ibz_b, 0, -w_ibx_b;
@@ -139,7 +145,7 @@ while k <= range_end
     % v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b + g - cross(2 * Ren' * w_ie, v_eb_n)) * T;
     % v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b + g) * T;
     % v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b) * T;
-    v_eb_n = v_eb_n_ + Rnb0 * f_ib_b * T;
+    v_eb_n = v_eb_n_ + Rnb0 * f_ib_b0 * T;
     v_eb_n(3) = 0;  % disable velocity in Down direction
 
     % position
