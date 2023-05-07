@@ -15,7 +15,8 @@ INS.Rb0b = R3(INS.psi0)*R2(INS.theta0)*R1(INS.phi0);
 INS.Rnb = INS.Rnb0 * INS.Rb0b;  % n-frame to b-frame
 
 % initial velocity
-INS.v_eb_n = [0; 0; 0];
+% INS.v_eb_n = [0; 0; 0];
+INS.v_eb_n = [0; 0];
 
 % initial latitude, longitude (degree) and height (m)
 % lat0 = single(deg2rad(48.1351));  % lat Munich
