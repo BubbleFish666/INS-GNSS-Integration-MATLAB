@@ -1,18 +1,18 @@
 %% read data from IMU
-INS.w_ib_b = INS.R_board_sensor * [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)];
-INS.w_ibx_b = INS.w_ib_b(1);
-INS.w_iby_b = INS.w_ib_b(2);
-INS.w_ibz_b = INS.w_ib_b(3);
+INS.w_ib_b = [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)];
+
 % note that fAcc are already compensated by sensor with gravity
-% It seems that MTi-3 frame is a global floating frame,
-% which means sensor data are measured in that global frame.
-% With facc multiplied by R_board_sensor (a quasi constant orientation
+% it seems that the Free Acc is measured in a global floating frame
+% With facc multiplied by R_board_facc (a quasi constant orientation
 % offset), f_ib_b0 represents the acc measured in b0 frame.
-INS.f_ib_b0 = INS.R_board_sensor * [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
+INS.f_ib_b0 = INS.R_board_facc * [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
 
 %% strapdown solution
 % rotation
 INS.Rnb_ = INS.Rnb;
+INS.w_ibx_b = INS.w_ib_b(1);
+INS.w_iby_b = INS.w_ib_b(2);
+INS.w_ibz_b = INS.w_ib_b(3);
 INS.omega_ib_b = [0, -INS.w_ibz_b, INS.w_iby_b;
                   INS.w_ibz_b, 0, -INS.w_ibx_b;
                   -INS.w_iby_b, INS.w_ibx_b, 0];
@@ -21,7 +21,8 @@ INS.omega_ie_n = w_ie * [0, sin(INS.lat / llh_scale), 0;
                          -sin(INS.lat  / llh_scale), 0, -cos(INS.lat / llh_scale);
                          0, cos(INS.lat / llh_scale), 0];
 
-INS.Rnb = INS.Rnb_ * (eye(3) + INS.omega_ib_b * T) - INS.omega_ie_n * INS.Rnb_ * T;
+INS.Rnb = INS.Rnb_ * (eye(3) + INS.omega_ib_b * T)...
+          - INS.omega_ie_n * INS.Rnb_ * T;
 
 % velocity
 INS.v_eb_n_ = INS.v_eb_n;
