@@ -38,11 +38,12 @@ heading = single(table2array(data(3:end,25)));
 % set data range in time (seconds)
 % data_range = (22 <= t) & (t <= 35);
 % data_range = (26 <= t) & (t <= 35);
-data_range = (22 <= t) & (t <= 160);
+% data_range = (22 <= t) & (t <= 160);
 % data_range = (65 <= t) & (t <= 75);
 % data_range = (109 <= t) & (t <= 120);
 % data_range = (144 <= t) & (t <= 160);
 % data_range = (169 <= t) & (t <= 177);
+data_range = (8 <= t) & (t <= 160);
 
 range_start = find(data_range,1,'first');
 range_end = find(data_range,1,'last');
@@ -59,23 +60,29 @@ psi0 = deg2rad(360 - 324.37);  % yaw at 26.0 s
 theta0 = 0;  % pitch
 phi0 = 0;  % roll
 
-% MTi-3 frame is rotated about z-axis by -88.75 (or -59) deg (probably due
-% to disabling the magnetometer)
-% original MTi-3 board frame (ENU) to the frame where facc is measured
-R_board_facc = R3(deg2rad(-59));
 % n-frame to original MTi-3 board frame (body frame)
 Rnb0 = R3(0.5 * pi) * R1(pi);
 % align yaw of MTi-3 frame to actual heading
 Rb0b = R3(psi0)*R2(theta0)*R1(phi0);
 Rnb = Rnb0 * Rb0b;  % n-frame to b-frame
 
-% MTi-3 roll pitch yaw at 22.04 s
-roll22040 = -0.88;
-pitch22030 = 4.83;
-yaw22030 = -86.05;
+% Free-Acc Frame is rotated about z-axis by -88.75 (or -59) deg (probably 
+% due to disabling the magnetometer)
+% original MTi-3 board frame (ENU) to the frame where facc is measured
+R_board_facc = R3(deg2rad(-59));
+
+% % MTi-3 roll pitch yaw at 22.04 s
+% roll22040 = -0.88;
+% pitch22030 = 4.83;
+% yaw22030 = -86.05;
+% MTi-3 roll pitch yaw at 8.041 s
+roll08041 = 1.35;
+pitch08041 = 1.94;
+yaw08041 = -84.26;
 % This is used to verify the orientation solution of the IN-Algorithm
 % correspond to the internal result calculated by MTi-3
-Rb0btest = R3(deg2rad(yaw22030)) * R2(deg2rad(pitch22030)) * R1(deg2rad(roll22040));
+% Rb0btest = R3(deg2rad(yaw22030)) * R2(deg2rad(pitch22030)) * R1(deg2rad(roll22040));
+Rb0btest = R3(deg2rad(yaw08041)) * R2(deg2rad(pitch08041)) * R1(deg2rad(roll08041));
 
 % initial velocity
 v_eb_n = [0; 0; 0];
@@ -141,7 +148,6 @@ while k <= range_end
     % offset), f_ib_b0 represents the acc measured in b0 frame.
     % f_ib_b = [accx(k); accy(k); accz(k)];
     f_ib_b0 = R_board_facc * [faccx(k); faccy(k); faccz(k)];
-
 
     % rotation
     Rnb_ = Rnb;
