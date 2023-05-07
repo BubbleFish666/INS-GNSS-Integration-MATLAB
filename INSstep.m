@@ -30,8 +30,9 @@ INS.v_eb_n_ = INS.v_eb_n;
 % INS.v_eb_n = INS.v_eb_n_ + (INS.Rnb_ * INS.f_ib_b) * T;
 % eul_tem = rotm2eul(INS.Rnb0' * INS.Rnb_);
 % INS.v_eb_n = INS.v_eb_n_ + (INS.Rnb0 * R3(eul_tem(1)) * INS.f_ib_b) * T;
-INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0 * INS.f_ib_b0 * T;
-INS.v_eb_n(3) = 0;  % disable velocity in Down direction
+% INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0 * INS.f_ib_b0 * T;
+% INS.v_eb_n(3) = 0;  % disable velocity in Down direction
+INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0(1:2, 1:3) * INS.f_ib_b0 * T;
 
 % position
 % h = h;

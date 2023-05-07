@@ -17,10 +17,14 @@ KF.z = KF.z_pre + KF.K * (KF.y - KF.H * KF.z_pre);
 
 KF.dpsi_nb = KF.z(1:3);
 KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
-KF.dv_eb_n = KF.z(4:6);
-KF.dllh = KF.z(7:9);
-KF.ba = KF.z(10:12);
-KF.bg = KF.z(13:15);
+% KF.dv_eb_n = KF.z(4:6);
+% KF.dllh = KF.z(7:9);
+% KF.ba = KF.z(10:12);
+% KF.bg = KF.z(13:15);
+KF.dv_eb_n = KF.z(4:5);
+KF.dllh = KF.z(6:7);
+KF.ba = KF.z(8:10);
+KF.bg = KF.z(11:13);
 
 % dpsi_nb = [0; 0; 0];  % attitude error
 % dv_eb_n = [0; 0; 0];  % velocity error
@@ -28,7 +32,9 @@ KF.bg = KF.z(13:15);
 % ba = [0; 0; 0];  % accelorometer error
 % bg = [0; 0; 0];  % gyro error
 
-KF.P = (eye(15) - KF.K * KF.H) * KF.P * (eye(15) - KF.K * KF.H)'...
+% KF.P = (eye(15) - KF.K * KF.H) * KF.P * (eye(15) - KF.K * KF.H)'...
+%        + KF.K * KF.R * KF.K';
+KF.P = (eye(13) - KF.K * KF.H) * KF.P * (eye(13) - KF.K * KF.H)'...
        + KF.K * KF.R * KF.K';
 
 % correct the INS
