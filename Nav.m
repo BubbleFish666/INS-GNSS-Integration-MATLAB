@@ -216,6 +216,19 @@ legend('lon (milli rad)')
 grid on
 hold on
 
+figure('Name', 'covariance')
+subplot(2,1,1)
+grid on
+hold on
+plot(t(data_range), LOG.KF.P(:, 3,3))
+legend('yaw error variance')
+
+subplot(2,1,2)
+grid on
+hold on
+plot(t(data_range), LOG.KF.P(:, 13,13))
+legend('bg z variance')
+
 % figure('Name', 'navigation states error KF')
 % subplot(3, 1, 1)
 % hold on

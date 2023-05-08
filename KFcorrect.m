@@ -66,7 +66,7 @@ LOG.KF.dv_eb_n(k - range_start + 1, :) = KF.dv_eb_n;
 LOG.KF.dllh(k - range_start + 1, :) = KF.dllh;
 LOG.KF.ba(k - range_start + 1, :) = KF.ba;
 LOG.KF.bg(k - range_start + 1, :) = KF.bg;
-LOG.KF.P{k - range_start + 1} = KF.P;
+LOG.KF.P(k - range_start + 1, :, :) = KF.P;
 
 % INS corrected
 LOG.INS.eul_nb_corrected(k - range_start + 1, :) = INS.eul_nb_corrected;
