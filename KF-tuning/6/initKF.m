@@ -61,6 +61,7 @@ KF.H = [zeros(2,3), zeros(2), eye(2), zeros(2,3), zeros(2,3)];
 KF.Q = zeros(13);
 KF.Q(4:5 , 4:5) = (1.6 * 10 * 1e-3 * T)^2 * eye(2);  % velocity error from accelorometer noise 1.6 mg
 % KF.Q(1:3 , 1:3) = (deg2rad(0.06) * T)^2 * eye(3);  % attitude error from gyro noise 0.06 deg/s
+% KF.Q(4:5 , 4:5) = (3.2 * 10 * 1e-3 * T)^2 * eye(2);  % velocity error from accelorometer noise 3.2 mg
 KF.Q(1:3 , 1:3) = (deg2rad(9.6) * T)^2 * eye(3);
 
 % measurement noise

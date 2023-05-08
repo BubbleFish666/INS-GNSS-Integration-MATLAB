@@ -67,11 +67,7 @@ LOG.KF.dv_eb_n(1:range_end-range_start+1, 2) = nan;
 LOG.KF.dllh(1:range_end-range_start+1, 2) = nan;
 LOG.KF.ba(1:range_end-range_start+1, 3) = nan;
 LOG.KF.bg(1:range_end-range_start+1, 3) = nan;
-
-LOG.KF.P = cell(range_end-range_start+1, 1);
-for i = 1:range_end-range_start+1
-    LOG.KF.P{i}(1:13, 1:13) = nan;
-end
+LOG.KF.P(1:range_end-range_start+1, 13, 13) = nan;
 
 % INS corrected by KF error estimate
 % LOG.INScorrected.llh(1:range_end-range_start+1, 1:3) = nan;
