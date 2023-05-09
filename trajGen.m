@@ -1,7 +1,7 @@
 %% set waypoints
 clear; close all;
      % Groundspeed, Waypoints, Orientation
-constraints = [0,     23,36,0,    -70,0,0;
+constraints = [0,     23,36,0,    -50,0,0;
                1.5,   38,46,0,    -45,0,0;
                1.48,  46,36,0,    -160,0,0;
                1.40,  52,7,0      -110,0,0;
@@ -23,19 +23,6 @@ trajectory = waypointTrajectory(constraints(:,2:4), ...
 
 % a table of specified constraints
 tInfo = waypointInfo(trajectory);
-
-%% plot initial point
-figure(1)
-plot(tInfo.Waypoints(1,1),tInfo.Waypoints(1,2),"b*")
-title("Position")
-% axis([20,65,0,25])
-xlabel("East")
-ylabel("North")
-grid on
-daspect([1 1 1])
-xlim([0, 80])
-ylim([0, 80])
-hold on
 
 %% calculate trajectory
 pos_log = zeros(8741, 3);
@@ -65,14 +52,42 @@ end
 % drawnow
 
 %% plot result
+close all;
 figure(1)
+plot(tInfo.Waypoints(1,1),tInfo.Waypoints(1,2),"b*")
+title("Position")
+% axis([20,65,0,25])
+xlabel("East")
+ylabel("North")
+grid on
+daspect([1 1 1])
+xlim([0, 80])
+ylim([0, 80])
+hold on
+
+% figure(1)
 plot(pos_log(:, 1),pos_log(:, 2),"b")
 grid on
+
+eulerAngles = rad2deg(rotm2eul(permute(orient_log, [2 3 1])));
+range = 2:100:8742;
+X(1:size(range)) = nan;
+Y(1:size(range)) = nan;
+U(1:size(range)) = nan;
+V(1:size(range)) = nan;
+cnt = 1;
+for idx = range
+    X(cnt) = pos_log(idx, 1);
+    Y(cnt) = pos_log(idx, 2);
+    U(cnt) = cosd(eulerAngles(idx, 1) + 90);
+    V(cnt) = sind(eulerAngles(idx, 1) + 90);
+    cnt = cnt + 1;
+end
+quiver(X, Y, U, V)
 
 figure(2)
 timeVector = 0:(1/trajectory.SampleRate):tInfo.TimeOfArrival(end);
 % eulerAngles = eulerd([tInfo.Orientation{1};orient],"ZYX","frame");
-eulerAngles = rad2deg(rotm2eul(permute(orient_log, [2 3 1])));
 plot(timeVector(2:end),eulerAngles(:,1), ...
      timeVector(2:end),eulerAngles(:,2), ...
      timeVector(2:end),eulerAngles(:,3));
