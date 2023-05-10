@@ -148,6 +148,7 @@ legend("East","North","Up")
 xlabel("Time (seconds)")
 ylabel("Velocity (m/s)")
 grid on
+hold on
 
 figure(4)
 plot(timeVector(2:end),acc_log(:,1), ...
@@ -199,12 +200,37 @@ xlabel("Time (seconds)")
 ylabel("Angular Velocity (rad/s)")
 grid on
 
+% compare reconstructed orientation (yaw)
 yaw = -38.5;
 yaw_log(1:3978) = nan;
 yaw_log(1) = yaw;
 for i = 2:3978
-    yaw = yaw - rad2deg(angVel_log(i, 3)) * (timeVector(i) - timeVector(i-1));
+    yaw = yaw - rad2deg(angVel_log(i, 3)) * 0.025;
     yaw_log(i) = yaw;
 end
 figure(2)
 plot(timeVector(2:end), yaw_log)
+
+% compare reconstructed velocity
+vel_re = [0;0;0];
+vel_re_log(1:3978, 1:3) = nan;
+vel_re_log(1, :) = vel_re;
+for i = 2:3978
+    vel_re = vel_re + R3(deg2rad(yaw_log(i))) * accb_log(i, :)' * 0.025;
+    vel_re_log(i, :) = vel_re;
+end
+figure(3)
+plot(timeVector(2:end),vel_re_log(:,1), ...
+     timeVector(2:end),vel_re_log(:,2), ...
+     timeVector(2:end),vel_re_log(:,3));
+
+% compare reconstructed position
+pos_re = [0;0;0];
+pos_re_log(1:3978, 1:3) = nan;
+pos_re_log(1, :) = pos_re;
+for i = 2:3978
+    pos_re = pos_re + (vel_re_log(i-1, :) + vel_re_log(i, :))' * 0.5 * 0.025;
+    pos_re_log(i, :) = pos_re;
+end
+figure(1)
+plot(pos_re_log(:,1), pos_re_log(:,2));
