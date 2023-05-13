@@ -51,6 +51,10 @@ trajectory = waypointTrajectory(constraints(:,2:4), ...
 % a table of specified constraints
 tInfo = waypointInfo(trajectory);
 
+% initial latitude and longitude
+lat0 = deg2rad(48.265567);
+lon0 = deg2rad(11.668792);
+
 %% calculate trajectory
 % pos_log = zeros(8741, 3);
 % orient_log = zeros(8741, 3, 3);
@@ -67,6 +71,9 @@ while ~isDone(trajectory)
    [pos, orient, vel, acc, angVel] = trajectory();
    
    pos_log(count, :) = pos;
+   pos_geo_log(count, :) = [pos(1) * 1000 / transverseRadius(lat0),...
+                            pos(2) * 1000 / meridionalRadius(lat0),...
+                            0];
    orient_log(count, :, :) = orient;
    vel_log(count, :) = vel;
    acc_log(count, :) = acc;
@@ -234,3 +241,29 @@ for i = 2:3978
 end
 figure(1)
 plot(pos_re_log(:,1), pos_re_log(:,2));
+
+% compare in navigation frame reconstructed velocity
+vel_re_nav = [0;0;0];
+vel_re_nav_log(1:3978, 1:3) = nan;
+vel_re_nav_log(1, :) = vel_re_nav;
+for i = 2:3978
+    vel_re_nav = vel_re_nav + acc_log(i, :)' * 0.025;
+    vel_re_nav_log(i, :) = vel_re_nav;
+end
+
+% compare in navigation frame reconstructed position
+pos_re_nav = [0;0;0];
+pos_re_nav_log(1:3978, 1:3) = nan;
+pos_re_nav_log(1, :) = pos_re_nav;
+for i = 2:3978
+    pos_re_nav = pos_re_nav + (vel_re_nav_log(i-1, :) + vel_re_nav_log(i, :))' * 0.5 * 0.025;
+    pos_re_nav_log(i, :) = pos_re_nav;
+end
+figure(1)
+plot(pos_re_nav_log(:,1), pos_re_nav_log(:,2));
+
+figure('Name', 'geo position')
+plot(pos_geo_log(:, 1), pos_geo_log(:, 2))
+xlabel('longitude increment (milli rad)')
+ylabel('latitude increment (milli rad)')
+grid on
