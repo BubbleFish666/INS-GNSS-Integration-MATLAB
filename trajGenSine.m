@@ -71,7 +71,7 @@ while ~isDone(trajectory)
    [pos, orient, vel, acc, angVel] = trajectory();
    
    pos_log(count, :) = pos;
-   pos_geo_log(count, :) = [pos(1) * 1000 / transverseRadius(lat0),...
+   pos_geo_log(count, :) = [pos(1) * 1000 / transverseRadius(lat0) / cos(lat0),...
                             pos(2) * 1000 / meridionalRadius(lat0),...
                             0];
    orient_log(count, :, :) = orient;
@@ -177,7 +177,7 @@ xlabel("Time (seconds)")
 ylabel("Angular Velocity (rad/s)")
 grid on
 
-figure(6)
+figure(10)
 plot(timeVector(2:end),velb_log(:,1), ...
      timeVector(2:end),velb_log(:,2), ...
      timeVector(2:end),velb_log(:,3));
@@ -262,8 +262,35 @@ end
 figure(1)
 plot(pos_re_nav_log(:,1), pos_re_nav_log(:,2));
 
+% geodetic coordinates
+pos_geo_re = [0;0;0];
+pos_geo_re_log(1:3978, 1:3) = nan;
+pos_geo_re_log(1, :) = pos_geo_re;
+for i = 2:3978
+    % latitude increment
+    pos_geo_re(2) = pos_geo_re(2)...
+        + (vel_re_log(i-1, 2) / meridionalRadius(lat0 + 0.001 * pos_geo_re(2))...
+        + vel_re_log(i, 2) / meridionalRadius(lat0 + 0.001 * pos_geo_re(2)))...
+        * 1000 * 0.5 * 0.025;
+    % longitude increment
+    pos_geo_re(1) = pos_geo_re(1)...
+        + (vel_re_log(i-1, 1) / cos(lat0 + 0.001 * pos_geo_re(2)) / transverseRadius(lat0 + 0.001 * pos_geo_re(2))...
+        + vel_re_log(i, 1) / cos(lat0 + 0.001 * pos_geo_re(2)) / transverseRadius(lat0 + 0.001 * pos_geo_re(2)))...
+        * 1000 * 0.5 * 0.025;
+
+    pos_geo_re_log(i, :) = pos_geo_re;
+end
+figure(1)
+plot(pos_re_log(:,1), pos_re_log(:,2));
+
 figure('Name', 'geo position')
 plot(pos_geo_log(:, 1), pos_geo_log(:, 2))
 xlabel('longitude increment (milli rad)')
 ylabel('latitude increment (milli rad)')
 grid on
+hold on
+
+plot(pos_geo_re_log(:, 1), pos_geo_re_log(:, 2))
+legend('geo position', 'reconstructed geo position')
+grid on
+
