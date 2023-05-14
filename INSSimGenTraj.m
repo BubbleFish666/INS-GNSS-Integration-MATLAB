@@ -9,8 +9,8 @@ VeloE = ref_traj.vel_log(:, 1);  % m/s
 VeloU = 0;  % m/s
 
 % reference geodetic coordinates
-lat_GNSS = ref_traj.pos_geo_log(:, 2);  % milli rad
-lon_GNSS = ref_traj.pos_geo_log(:, 1);  % milli rad
+lat_GNSS = ref_traj.pos_geo_incre_log(:, 2) + ref_traj.lat0 * 1000;  % milli rad
+lon_GNSS = ref_traj.pos_geo_incre_log(:, 1) + ref_traj.lon0 * 1000;  % milli rad
 
 % reference IMU data
 % angular velocity seems to be reversed in sign
@@ -303,7 +303,7 @@ hold on
 
 subplot(4,1,3);
 plot(t(data_range), LOG.llh_incre_total(:,1),...
-     t(data_range), ref_traj.pos_geo_log(:, 2))
+     t(data_range), ref_traj.pos_geo_incre_log(:, 2))
 title('position')
 legend('latitude increment (milli rad)', 'latitude increment ref (milli rad)')
 grid on
@@ -311,7 +311,7 @@ hold on
 
 subplot(4,1,4);
 plot(t(data_range), LOG.llh_incre_total(:,2),...
-     t(data_range), ref_traj.pos_geo_log(:, 1))
+     t(data_range), ref_traj.pos_geo_incre_log(:, 1))
 title('position')
 legend('longitude increment INS (milli rad)', 'longitude increment ref (milli rad)')
 grid on
