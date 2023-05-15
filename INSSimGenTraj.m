@@ -16,7 +16,7 @@ lon_GNSS = ref_traj.pos_geo_incre_log(:, 1) + ref_traj.lon0 * 1000;  % milli rad
 % angular velocity seems to be reversed in sign
 gyrox = ref_traj.angVelb_log(:, 1);  % always 0
 gyroy = ref_traj.angVelb_log(:, 2);  % always 0
-gyroz = -ref_traj.angVelb_log(:, 3);  % rad/s
+gyroz = -ref_traj.angVelb_log(:, 3);  % rad/s, not sure why but it's reversed
 accx = ref_traj.accb_log(:, 1);  % m/s^2
 accy = ref_traj.accb_log(:, 2);  % m/s^2
 accz = ref_traj.accb_log(:, 3);  % always 0
