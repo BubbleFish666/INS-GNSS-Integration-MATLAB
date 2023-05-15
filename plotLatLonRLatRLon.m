@@ -24,8 +24,8 @@ data_range = (8 <= t) & (t <= 160);
 subplot(2,1,1);
 plot(t(data_range), (lat(data_range)-49.06588).*meridionalRadius(49.06588), 'x',...
      t(data_range), (rlat(data_range)-49.06588).*meridionalRadius(49.06588), '.')
-title('lat, raw lat')
 legend('lat (m)', 'raw lat (m)')
+xlabel('time (s)')
 % xticks(0:10:200)
 grid on
 hold on
@@ -33,8 +33,8 @@ hold on
 subplot(2,1,2);
 plot(t(data_range), (lon(data_range)-9.26066).*transverseRadius(9.26066), 'x',...
      t(data_range), (rlon(data_range)-9.26066).*transverseRadius(9.26066), '.')
-title('lon (m), raw lon (m)')
-legend('lon', 'raw lon')
+legend('lon (m)', 'raw lon (m)')
+xlabel('time (s)')
 % xticks(0:10:200)
 grid on
 hold on

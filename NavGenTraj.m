@@ -7,8 +7,8 @@ t = ref_traj.timeVector(2:end);
 ref.lat = ref_traj.pos_geo_incre_log(:, 2) + ref_traj.lat0 * 1000;  % milli rad
 ref.lon = ref_traj.pos_geo_incre_log(:, 1) + ref_traj.lon0 * 1000;  % milli rad
 % reference velocity
-ref.VeloN = ref_traj.vel_log(:, 2);  % m/s
 ref.VeloE = ref_traj.vel_log(:, 1);  % m/s
+ref.VeloN = ref_traj.vel_log(:, 2);  % m/s
 ref.VeloU = 0;  % m/s
 % reference acceleration in body frame
 ref.accx = ref_traj.accb_log(:, 1);  % m/s^2
@@ -45,11 +45,26 @@ plot(t, IMU.gyrox, t, IMU.gyroy, t, IMU.gyroz,...
 legend('IMU gyrox', 'IMU gyroy', 'IMU gyroz', 'ref gyrox', 'ref gyroy', 'ref gyroz')
 grid on
 
-%% simulate GNSS data
-initGNSSModel
-GNSS.lat_GNSS = deg2rad(single(table2array(data(3:end,16))));  % deg -> rad
-GNSS.lon_GNSS = deg2rad(single(table2array(data(3:end,17))));  % deg -> rad
+%% simulate GNSS data (in our case, GPS)
+initGPSModel
+[GPS_pos, ~, ~, ~] = GPSModel([rad2deg(ref.lat * 0.001), rad2deg(ref.lon * 0.001), zeros(size(ref.lat))],...
+                              [ref.VeloE, ref.VeloN, zeros(size(ref.VeloE))]);
+GNSS.lat_GNSS = deg2rad(GPS_pos(:, 1));  % deg -> rad
+GNSS.lon_GNSS = deg2rad(GPS_pos(:, 2));  % deg -> rad
 
+%% plot simulated GNSS data
+figure('Name', 'GNSS data')
+subplot(2,1,1)
+plot(t, GNSS.lat_GNSS * 1e3, t, ref.lat)
+legend('GNSS lat', 'ref lat')
+grid on
+subplot(2,1,2)
+plot(t, GNSS.lon_GNSS * 1e3, t, ref.lon)
+legend('GNSS lon', 'ref lon')
+grid on
+
+
+%%
 % set data range in time (seconds)
 % data_range = (22 <= t) & (t <= 35);
 % data_range = (22 <= t) & (t <= 160);
