@@ -3,6 +3,9 @@
 clear; close all;
 ref_traj = load("trajData.mat");
 
+% enable/disable imu noise
+imu_noise = true;
+
 % reference velocity
 VeloN = ref_traj.vel_log(:, 2);  % m/s
 VeloE = ref_traj.vel_log(:, 1);  % m/s
@@ -20,6 +23,18 @@ gyroz = -ref_traj.angVelb_log(:, 3);  % rad/s, not sure why but it's reversed
 accx = ref_traj.accb_log(:, 1);  % m/s^2
 accy = ref_traj.accb_log(:, 2);  % m/s^2
 accz = ref_traj.accb_log(:, 3);  % always 0
+
+if imu_noise
+    initIMUModel
+    [IMU_acc, IMU_gyro] = IMUModel([accx, accy, accz],...
+        [gyrox, gyroy, gyroz]);
+    accx = -single(IMU_acc(:, 1));  % m/s^2
+    accy = -single(IMU_acc(:, 2));  % m/s^2
+    accz = -single(IMU_acc(:, 3) - 9.81);  % m/s^2
+    gyrox = single(IMU_gyro(:, 1));  % rad/s
+    gyroy = single(IMU_gyro(:, 2));  % rad/s
+    gyroz = single(IMU_gyro(:, 3));  % rad/s
+end
 % gyrox = single(table2array(data(3:end,10)));  % rad/s
 % gyroy = single(table2array(data(3:end,11)));  % rad/s
 % gyroz = single(table2array(data(3:end,12)));  % rad/s
@@ -322,6 +337,8 @@ hold on
 grid on
 plot(LOG.pos(:, 2), LOG.pos(:, 1))
 plot(ref_traj.pos_log(:, 1), ref_traj.pos_log(:, 2))
+xlabel('East (m)')
+ylabel('North (m)')
 legend('pos INS', 'pos ref')
 
 % subplot(4,1,3);
