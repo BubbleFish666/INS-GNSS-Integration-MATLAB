@@ -1,6 +1,7 @@
 %% load data
 clear; close all;
 ref_traj = load("trajData.mat");
+t = ref_traj.timeVector(2:end);
 
 % reference latitude and longitude
 ref.lat = ref_traj.pos_geo_incre_log(:, 2) + ref_traj.lat0 * 1000;  % milli rad
@@ -20,16 +21,32 @@ ref.gyrox = ref_traj.angVelb_log(:, 1);  % always 0
 ref.gyroy = ref_traj.angVelb_log(:, 2);  % always 0
 ref.gyroz = -ref_traj.angVelb_log(:, 3);  % rad/s, not sure why but it's reversed
 
-% simulated IMU data
-IMUModel = imuSensor('accel-gyro');
-%%
-IMU.gyrox = single(table2array(data(3:end,10)));  % rad/s
-IMU.gyroy = single(table2array(data(3:end,11)));  % rad/s
-IMU.gyroz = single(table2array(data(3:end,12)));  % rad/s
-IMU.faccx = single(table2array(data(3:end,7)));  % m/s^2
-IMU.faccy = single(table2array(data(3:end,8)));  % m/s^2
-IMU.faccz = single(table2array(data(3:end,9)));  % m/s^2
-% simulated GNSS data
+%% simulate IMU data
+initIMUModel
+[IMU_acc, IMU_gyro] = IMUModel([ref.accx, ref.accy, ref.accz],...
+                               [ref.gyrox, ref.gyroy, ref.gyroz]);
+IMU.faccx = -single(IMU_acc(:, 1));  % m/s^2
+IMU.faccy = -single(IMU_acc(:, 2));  % m/s^2
+IMU.faccz = -single(IMU_acc(:, 3) - 9.81);  % m/s^2
+IMU.gyrox = single(IMU_gyro(:, 1));  % rad/s
+IMU.gyroy = single(IMU_gyro(:, 2));  % rad/s
+IMU.gyroz = single(IMU_gyro(:, 3));  % rad/s
+
+%% plot simulated IMU data
+figure('Name', 'IMU Acc data')
+plot(t, IMU.faccx, t, IMU.faccy, t, IMU.faccz,...
+     t, ref.accx, t, ref.accy, t, ref.accz)
+legend('IMU accx', 'IMU accy', 'IMU accz', 'ref accx', 'ref accy', 'ref accz')
+grid on
+
+figure('Name', 'IMU Gyro data')
+plot(t, IMU.gyrox, t, IMU.gyroy, t, IMU.gyroz,...
+     t, ref.gyrox, t, ref.gyroy, t, ref.gyroz)
+legend('IMU gyrox', 'IMU gyroy', 'IMU gyroz', 'ref gyrox', 'ref gyroy', 'ref gyroz')
+grid on
+
+%% simulate GNSS data
+initGNSSModel
 GNSS.lat_GNSS = deg2rad(single(table2array(data(3:end,16))));  % deg -> rad
 GNSS.lon_GNSS = deg2rad(single(table2array(data(3:end,17))));  % deg -> rad
 
@@ -42,7 +59,6 @@ GNSS.lon_GNSS = deg2rad(single(table2array(data(3:end,17))));  % deg -> rad
 % data_range = (169 <= t) & (t <= 177);
 % data_range = (8 <= t) & (t <= 160);
 
-t = ref_traj.timeVector(2:end);
 data_range = (0 <= t) & (t <= 100);
 
 %% initialize
