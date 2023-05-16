@@ -15,11 +15,11 @@ constraints = [0,     23,36,0,    -50,0,0;
                0,     23,36,0,    -70,0,0];
 
 %% sine traj
-x_max = 100;
-num_sample = 50;
+x_max = 200;
+num_sample = 200;
 x = linspace(0, x_max, num_sample)';
-y = 20 * sin(2 * pi .* x ./ 100);
-tan_angle = atand(40 * pi / x_max * cos(2 * pi .* x ./ x_max));
+y = 20 * sin(5 * pi .* x ./ x_max);
+tan_angle = atand(100 * pi / x_max * cos(5 * pi .* x ./ x_max));
 psi = tan_angle - 90;
 
 % plot(x, y);
@@ -33,7 +33,8 @@ constraints(1:num_sample, :) = nan;
 % constraints(1, 1) = 0;
 % constraints(2:num_sample - 1, 1) = 1.5;
 % constraints(num_sample, 1) = 0;
-load("groundspeed.mat", "groundspeed");
+% load("groundspeed.mat", "groundspeed");
+load("groundspeed200.mat", "groundspeed");
 constraints(:, 1) = groundspeed;
 
 % waypoints
@@ -104,7 +105,6 @@ title("Position")
 xlabel("East")
 ylabel("North")
 grid on
-daspect([1 1 1])
 % xlim([0, 80])
 % ylim([0, 80])
 hold on
@@ -115,7 +115,8 @@ grid on
 
 eulerAngles = rad2deg(rotm2eul(permute(orient_log, [2 3 1])));
 % range = 2:100:8742;
-range = 2:100:3978;
+sample_length = length(pos_log(:, 1));
+range = 2:100:sample_length;
 X(1:size(range)) = nan;
 Y(1:size(range)) = nan;
 U(1:size(range)) = nan;
@@ -128,7 +129,7 @@ for idx = range
     V(cnt) = sind(eulerAngles(idx, 1) + 90);
     cnt = cnt + 1;
 end
-quiver(X, Y, U, V)
+% quiver(X, Y, U, V)
 
 figure(2)
 timeVector = 0:(1/trajectory.SampleRate):tInfo.TimeOfArrival(end);
@@ -208,10 +209,10 @@ ylabel("Angular Velocity (rad/s)")
 grid on
 
 % compare reconstructed orientation (yaw)
-yaw = -38.5;
-yaw_log(1:3978) = nan;
+yaw = eulerAngles(1, 1);
+yaw_log(1:sample_length) = nan;
 yaw_log(1) = yaw;
-for i = 2:3978
+for i = 2:sample_length
     yaw = yaw - rad2deg(angVel_log(i, 3)) * 0.025;
     yaw_log(i) = yaw;
 end
@@ -220,9 +221,9 @@ plot(timeVector(2:end), yaw_log)
 
 % compare reconstructed velocity
 vel_re = [0;0;0];
-vel_re_log(1:3978, 1:3) = nan;
+vel_re_log(1:sample_length, 1:3) = nan;
 vel_re_log(1, :) = vel_re;
-for i = 2:3978
+for i = 2:sample_length
     vel_re = vel_re + R3(deg2rad(yaw_log(i))) * accb_log(i, :)' * 0.025;
     vel_re_log(i, :) = vel_re;
 end
@@ -233,9 +234,9 @@ plot(timeVector(2:end),vel_re_log(:,1), ...
 
 % compare reconstructed position
 pos_re = [0;0;0];
-pos_re_log(1:3978, 1:3) = nan;
+pos_re_log(1:sample_length, 1:3) = nan;
 pos_re_log(1, :) = pos_re;
-for i = 2:3978
+for i = 2:sample_length
     pos_re = pos_re + (vel_re_log(i-1, :) + vel_re_log(i, :))' * 0.5 * 0.025;
     pos_re_log(i, :) = pos_re;
 end
@@ -244,18 +245,18 @@ plot(pos_re_log(:,1), pos_re_log(:,2));
 
 % compare in navigation frame reconstructed velocity
 vel_re_nav = [0;0;0];
-vel_re_nav_log(1:3978, 1:3) = nan;
+vel_re_nav_log(1:sample_length, 1:3) = nan;
 vel_re_nav_log(1, :) = vel_re_nav;
-for i = 2:3978
+for i = 2:sample_length
     vel_re_nav = vel_re_nav + acc_log(i, :)' * 0.025;
     vel_re_nav_log(i, :) = vel_re_nav;
 end
 
 % compare in navigation frame reconstructed position
 pos_re_nav = [0;0;0];
-pos_re_nav_log(1:3978, 1:3) = nan;
+pos_re_nav_log(1:sample_length, 1:3) = nan;
 pos_re_nav_log(1, :) = pos_re_nav;
-for i = 2:3978
+for i = 2:sample_length
     pos_re_nav = pos_re_nav + (vel_re_nav_log(i-1, :) + vel_re_nav_log(i, :))' * 0.5 * 0.025;
     pos_re_nav_log(i, :) = pos_re_nav;
 end
@@ -264,9 +265,9 @@ plot(pos_re_nav_log(:,1), pos_re_nav_log(:,2));
 
 % geodetic coordinates
 pos_geo_incre_re = [0;0;0];
-pos_geo_incre_re_log(1:3978, 1:3) = nan;
+pos_geo_incre_re_log(1:sample_length, 1:3) = nan;
 pos_geo_incre_re_log(1, :) = pos_geo_incre_re;
-for i = 2:3978
+for i = 2:sample_length
     % latitude increment
     pos_geo_incre_re(2) = pos_geo_incre_re(2)...
         + (vel_re_log(i-1, 2) / meridionalRadius(lat0 + 0.001 * pos_geo_incre_re(2))...

@@ -1,10 +1,10 @@
 %% set trajectory
 % load data
 clear; close all;
-ref_traj = load("trajData.mat");
+ref_traj = load("trajData200.mat");
 
 % enable/disable imu noise
-imu_noise = true;
+imu_noise = false;
 
 % reference velocity
 VeloN = ref_traj.vel_log(:, 2);  % m/s
@@ -66,7 +66,7 @@ end
 % data_range = (8 <= t) & (t <= 160);
 
 t = ref_traj.timeVector(2:end);
-data_range = (0 <= t) & (t <= 100);
+data_range = 0 <= t;
 
 range_start = find(data_range,1,'first');
 range_end = find(data_range,1,'last');
@@ -147,6 +147,7 @@ LOG.llh_incre_total(1:range_end-range_start+1, 1:3) = nan;
 LOG.llh_incre(1:range_end-range_start+1, 1:3) = nan;
 LOG.eul_b0btest(1:range_end-range_start+1, 1:3) = nan;
 
+LOG.vel(1:range_end-range_start+1, 1:3) = nan;
 LOG.pos(1:range_end-range_start+1, 1:3) = nan;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -164,6 +165,10 @@ lon0_frac = lon0 - lon0_int;
 
 h = h0;
 pos = [0;0;0];
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+k = k + 1;  % to align the data with the ref traj
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 while k <= range_end
     % read data from IMU
     % angular velocity is measured in board-fixed frame
@@ -189,6 +194,7 @@ while k <= range_end
     % neglecting earth rotation
     Rnb = Rnb_ * (eye(3) + omega_ib_b * T);
 
+    % test the weird MTi-3 frame
     % Rb0btest_ = Rb0btest;
     % Rb0btest = Rb0btest_ * (eye(3) + omega_ib_b * T)...
     %            - omega_ie_b0 * Rb0btest_ * T;
@@ -200,7 +206,7 @@ while k <= range_end
     v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b) * T;
     % v_eb_n = v_eb_n_ + Rnb0 * f_ib_b0 * T;
     v_eb_n(3) = 0;  % disable velocity in Down direction
-
+    
     % position
     % h = h;
     lat_ = lat;
@@ -216,6 +222,7 @@ while k <= range_end
     lon_incre_total = lon_incre_total + lon_incre;
     lon = lon0 + lon_incre_total;
 
+    % for testing INS algorithm with ref traj
     pos(1) = pos(1) + (v_eb_n_(1) + v_eb_n(1)) * 0.5 * T;
     pos(2) = pos(2) + (v_eb_n_(2) + v_eb_n(2)) * 0.5 * T;
     pos(3) = 0;
@@ -230,7 +237,7 @@ while k <= range_end
     % eul_b0b(1) = changeDegRange360(eul_b0b(1));
     LOG.eul_b0b(k-range_start+1, :) = eul_b0b;
 
-    % test
+    % test the weird MTi-3 frame
     % eul_b0btest = rotm2eul(Rb0btest) * 180 / pi;
     % LOG.eul_b0btest(k-range_start+1, :) = eul_b0btest;
 
@@ -336,6 +343,7 @@ figure('Name', 'pos')
 hold on
 grid on
 plot(LOG.pos(:, 2), LOG.pos(:, 1))
+% plot(LOG.pos(:, 1), LOG.pos(:, 2))
 plot(ref_traj.pos_log(:, 1), ref_traj.pos_log(:, 2))
 xlabel('East (m)')
 ylabel('North (m)')

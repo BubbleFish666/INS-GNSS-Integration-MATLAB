@@ -6,7 +6,8 @@ KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
 
 % velocity
 KF.dv_eb_n_ = KF.dv_eb_n;
-KF.f_ib_n = INS.Rnb0 * INS.f_ib_b0 + [0; 0; -9.81];
+% KF.f_ib_n = INS.Rnb0 * INS.f_ib_b0 + [0; 0; -9.81];
+KF.f_ib_n = INS.Rnb * INS.f_ib_b;
 % KF.F21n = [0, KF.f_ib_n(3), -KF.f_ib_n(2);
 %            -KF.f_ib_n(3), 0, KF.f_ib_n(1);
 %            KF.f_ib_n(2), -KF.f_ib_n(1), 0];
@@ -26,7 +27,7 @@ KF.dv_eb_n = KF.dv_eb_n_ + KF.F21n * T * KF.dpsi_nb_...
 %            0, 0, -1];
 KF.F32n = [1 * llh_scale / (meridionalRadius(INS.lat / llh_scale) + INS.h), 0;
            0, 1 * llh_scale / ((transverseRadius(INS.lat / llh_scale) + INS.h) * cos(INS.lat / llh_scale))];
-KF.dllh = KF.dllh + KF.F32n * T * KF.dv_eb_n_;
+KF.dllh = KF.dllh + KF.F32n * T * KF.dv_eb_n_;  % milli rad
 % KF.dllh(3) = 0;  % disable height
 
 % covariance of estimate
