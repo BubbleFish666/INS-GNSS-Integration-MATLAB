@@ -1,5 +1,5 @@
 %% load data
-clear
+clear; close all;
 data = readtable("Frames.xlsx");
 t = table2array(data(3:end,1));
 t = datenum(t, 'HH:MM:SS,FFF');
@@ -15,16 +15,17 @@ rlat = single(table2array(data(3:end,29)));
 rlon = single(table2array(data(3:end,30)));
 
 %% set data range in time (seconds)
-data_range = (144 <= t) & (t <= 160);
+% data_range = (144 <= t) & (t <= 160);
 % data_range = (22 <= t) & (t <= 35);
 % data_range = (109 <= t) & (t <= 120);
+data_range = (8 <= t) & (t <= 160);
 
 %% plot data
 subplot(2,1,1);
 plot(t(data_range), (lat(data_range)-49.06588).*meridionalRadius(49.06588), 'x',...
      t(data_range), (rlat(data_range)-49.06588).*meridionalRadius(49.06588), '.')
-title('lat, raw lat')
-legend('lat', 'raw lat')
+legend('lat (m)', 'raw lat (m)')
+xlabel('time (s)')
 % xticks(0:10:200)
 grid on
 hold on
@@ -32,8 +33,8 @@ hold on
 subplot(2,1,2);
 plot(t(data_range), (lon(data_range)-9.26066).*transverseRadius(9.26066), 'x',...
      t(data_range), (rlon(data_range)-9.26066).*transverseRadius(9.26066), '.')
-title('lon, raw lon')
-legend('lon', 'raw lon')
+legend('lon (m)', 'raw lon (m)')
+xlabel('time (s)')
 % xticks(0:10:200)
 grid on
 hold on

@@ -112,10 +112,9 @@ hold on
 
 subplot(4,1,2);
 plot(t(data_range), LOG.INS.v_eb_n(:, 1), '.', t(data_range), LOG.INS.v_eb_n(:, 2), '.',...
-     t(data_range), MTi7.VeloN(data_range), t(data_range), MTi7.VeloE(data_range),...
-     t(data_range), LOG.INS.v_eb_n(:, 3))
+     t(data_range), MTi7.VeloN(data_range), t(data_range), MTi7.VeloE(data_range))
 title('velocity')
-legend('Vn INS', 'Ve INS', 'Vn MTi7', 'Ve MTi7', 'Vh')
+legend('Vn INS', 'Ve INS', 'Vn MTi7', 'Ve MTi7')
 grid on
 hold on
 
@@ -149,16 +148,16 @@ hold on
 grid on
 plot(t(data_range), LOG.KF.dv_eb_n(:, 1))
 plot(t(data_range), LOG.KF.dv_eb_n(:, 2))
-plot(t(data_range), LOG.KF.dv_eb_n(:, 3))
-legend('d vn', 'd ne', 'd vd')
+% plot(t(data_range), LOG.KF.dv_eb_n(:, 3))
+legend('d vn', 'd ne')
 
 subplot(3, 1, 3)
 hold on
 grid on
 plot(t(data_range), LOG.KF.dllh(:, 1))
 plot(t(data_range), LOG.KF.dllh(:, 2))
-plot(t(data_range), LOG.KF.dllh(:, 3))
-legend('d lat', 'd lon', 'd h')
+% plot(t(data_range), LOG.KF.dllh(:, 3))
+legend('d lat', 'd lon')
 
 figure('Name', 'IMU sensor error KF')
 subplot(2, 1, 1)
@@ -192,10 +191,9 @@ subplot(4,1,2);
 plot(t(data_range), LOG.INS.v_eb_n_corrected(:, 1), '.',...
      t(data_range), LOG.INS.v_eb_n_corrected(:, 2), '.',...
      t(data_range), MTi7.VeloN(data_range),...
-     t(data_range), MTi7.VeloE(data_range),...
-     t(data_range), LOG.INS.v_eb_n_corrected(:, 3))
+     t(data_range), MTi7.VeloE(data_range))
 title('velocity')
-legend('Vn INS corrected', 'Ve INS corrected', 'Vn MTi7', 'Ve MTi7', 'Vh corrected')
+legend('Vn INS corrected', 'Ve INS corrected', 'Vn MTi7', 'Ve MTi7')
 ylim([-4 4])
 grid on
 hold on
@@ -217,6 +215,19 @@ title('position')
 legend('lon (milli rad)')
 grid on
 hold on
+
+figure('Name', 'covariance')
+subplot(2,1,1)
+grid on
+hold on
+plot(t(data_range), LOG.KF.P(:, 3,3))
+legend('yaw error variance')
+
+subplot(2,1,2)
+grid on
+hold on
+plot(t(data_range), LOG.KF.P(:, 13,13))
+legend('bg z variance')
 
 % figure('Name', 'navigation states error KF')
 % subplot(3, 1, 1)
