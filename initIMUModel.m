@@ -9,5 +9,5 @@ IMUModel.Gyroscope.RandomWalk = deg2rad(0.007);  % (rad/s)/√Hz, improvised
 % accelerometer noise
 IMUModel.Accelerometer.MeasurementRange = 16 * 10;  % m/s^2, according to MTi-3
 IMUModel.Accelerometer.BiasInstability = 0.03e-3 * 10;  % m/s^2, according to MTi-3
-IMUModel.Accelerometer.NoiseDensity = 120e-6 * 10;  % (m/s2/√Hz), according to MTi-3
-IMUModel.Accelerometer.RandomWalk = 120e-6 * 10;  % (m/s2/√Hz), improvised
+IMUModel.Accelerometer.NoiseDensity = 120e-6 * 10;  % (m/s^2/√Hz), according to MTi-3 120 ug/√Hz
+IMUModel.Accelerometer.RandomWalk = 120e-6 * 10;  % (m/s^2/√Hz), improvised

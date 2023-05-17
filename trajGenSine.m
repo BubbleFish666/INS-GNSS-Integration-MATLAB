@@ -15,11 +15,11 @@ constraints = [0,     23,36,0,    -50,0,0;
                0,     23,36,0,    -70,0,0];
 
 %% sine traj
-x_max = 200;
-num_sample = 200;
+x_max = 600;
+num_sample = 600;
 x = linspace(0, x_max, num_sample)';
-y = 20 * sin(5 * pi .* x ./ x_max);
-tan_angle = atand(100 * pi / x_max * cos(5 * pi .* x ./ x_max));
+y = 20 * sin(15 * pi .* x ./ x_max);
+tan_angle = atand(300 * pi / x_max * cos(15 * pi .* x ./ x_max));
 psi = tan_angle - 90;
 
 % plot(x, y);
@@ -34,7 +34,7 @@ constraints(1:num_sample, :) = nan;
 % constraints(2:num_sample - 1, 1) = 1.5;
 % constraints(num_sample, 1) = 0;
 % load("groundspeed.mat", "groundspeed");
-load("groundspeed200.mat", "groundspeed");
+load("groundspeed600.mat", "groundspeed");
 constraints(:, 1) = groundspeed;
 
 % waypoints
