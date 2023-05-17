@@ -2,9 +2,15 @@
 % calculate measurement y with only fractional parts to avoid numerical issue
 KF.lat_GNSS_frac = GNSS.lat_GNSS(k) * llh_scale - INS.lat0_int;
 KF.lon_GNSS_frac = GNSS.lon_GNSS(k) * llh_scale - INS.lon0_int;
-KF.y = [KF.lat_GNSS_frac; KF.lon_GNSS_frac]...
-     - [INS.lat0_frac + INS.lat_incre_total;
+% KF.y = [KF.lat_GNSS_frac; KF.lon_GNSS_frac]...
+%      - [INS.lat0_frac + INS.lat_incre_total;
+%         INS.lon0_frac + INS.lon_incre_total];  % milli rad
+KF.y = [GNSS.vn_GNSS(k); GNSS.ve_GNSS(k); KF.lat_GNSS_frac; KF.lon_GNSS_frac]...
+     - [INS.v_eb_n(1);
+        INS.v_eb_n(2);
+        INS.lat0_frac + INS.lat_incre_total;
         INS.lon0_frac + INS.lon_incre_total];  % milli rad
+
 KF.z_pre = [KF.dpsi_nb; KF.dv_eb_n; KF.dllh; KF.ba; KF.bg];
 
 % covariance of innovation
