@@ -46,3 +46,14 @@ INS.lat0_frac = INS.lat0 - INS.lat0_int;
 INS.lon0_frac = INS.lon0 - INS.lon0_int;
 
 INS.h = INS.h0;
+
+% states corrected by feedback
+INS.Rnb_fedback = INS.Rnb;
+INS.v_eb_n_fedback = INS.v_eb_n;
+INS.lat_incre_total_fedback = INS.lat_incre_total;
+INS.lon_incre_total_fedback = INS.lon_incre_total;
+INS.lat_fedback = INS.lat;
+INS.lon_fedback = INS.lon;
+
+INS.ba = [0;0;0];
+INS.bg = [0;0;0];
