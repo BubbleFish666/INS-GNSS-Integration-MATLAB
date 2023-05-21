@@ -2,7 +2,8 @@
 clear; close all;
 
 % select reference trajectory
-ref_traj = load("trajData600.mat");
+addpath("reference_trajectory_data\");
+ref_traj = load("reference_trajectory_data\trajData600.mat");
 % ref_traj = load("trajData200.mat");
 t = ref_traj.timeVector(2:end);
 
