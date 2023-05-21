@@ -54,8 +54,8 @@ INS.llh_corrected = [INS.lat0 + INS.llh_incre_total_corrected(1);
 
 INS.v_eb_n_corrected = INS.v_eb_n_fedback + KF.dv_eb_n;
 
-INS.eul_nb_corrected = rotm2eul(KF.Rnn * INS.Rnb_fedback) * 180 / pi;
-% INS.eul_nb_corrected(1) = changeDegRange360(INS.eul_nb_corrected(1));
+% INS.eul_nb_corrected = rotm2eul(KF.Rnn * INS.Rnb_fedback) * 180 / pi;
+% % INS.eul_nb_corrected(1) = changeDegRange360(INS.eul_nb_corrected(1));
 
 INS.eul_b0b_corrected = rotm2eul(INS.Rnb0' * KF.Rnn * INS.Rnb_fedback) * 180 / pi;
 % INS.eul_b0b_corrected(1) = changeDegRange360(INS.eul_b0b_corrected(1));
@@ -95,7 +95,7 @@ LOG.KF.bg(k - range_start + 1, :) = KF.bg;
 LOG.KF.P(k - range_start + 1, :, :) = KF.P;
 
 % INS corrected
-LOG.INS.eul_nb_corrected(k - range_start + 1, :) = INS.eul_nb_corrected;
+% LOG.INS.eul_nb_corrected(k - range_start + 1, :) = INS.eul_nb_corrected;
 LOG.INS.eul_b0b_corrected(k - range_start + 1, :) = INS.eul_b0b_corrected;
 LOG.INS.v_eb_n_corrected(k - range_start + 1, :) = INS.v_eb_n_corrected;
 LOG.INS.llh_incre_total_corrected(k - range_start + 1, :) = INS.llh_incre_total_corrected;

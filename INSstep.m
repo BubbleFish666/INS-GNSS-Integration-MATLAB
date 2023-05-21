@@ -91,10 +91,10 @@ INS.lon_fedback = INS.lon0 + INS.lon_incre_total_fedback;
 %% logging
 % rotm2eul returns angles in yaw - pitch - roll order (rad)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% raw INS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% rotation relative to local navigation frame
-INS.eul_nb = rotm2eul(INS.Rnb) * 180 / pi;
-% INS.eul_nb(1) = changeDegRange360(INS.eul_nb(1));
-LOG.INS.eul_nb(k-range_start+1, :) = INS.eul_nb;
+% % rotation relative to local navigation frame
+% INS.eul_nb = rotm2eul(INS.Rnb) * 180 / pi;
+% % INS.eul_nb(1) = changeDegRange360(INS.eul_nb(1));
+% LOG.INS.eul_nb(k-range_start+1, :) = INS.eul_nb;
 
 % rotation relative to original sensor frame
 INS.eul_b0b = rotm2eul(INS.Rnb0'*INS.Rnb) * 180 / pi;
@@ -110,10 +110,10 @@ LOG.INS.llh_incre_total(k-range_start+1, :) = [INS.lat_incre_total, INS.lon_incr
 LOG.INS.llh_incre(k-range_start+1, :) = [INS.lat_incre, INS.lon_incre, 0];
 
 %%%%%%%%%%%%%%%%%%%%%%%%%% fedback INS %%%%%%%%%%%%%%%%%%%%%%%%%%
-% rotation relative to local navigation frame
-INS.eul_nb_fedback = rotm2eul(INS.Rnb_fedback) * 180 / pi;
-% INS.eul_nb(1) = changeDegRange360(INS.eul_nb(1));
-LOG.INS.eul_nb_fedback(k-range_start+1, :) = INS.eul_nb_fedback;
+% % rotation relative to local navigation frame
+% INS.eul_nb_fedback = rotm2eul(INS.Rnb_fedback) * 180 / pi;
+% % INS.eul_nb(1) = changeDegRange360(INS.eul_nb(1));
+% LOG.INS.eul_nb_fedback(k-range_start+1, :) = INS.eul_nb_fedback;
 
 % rotation relative to original sensor frame
 INS.eul_b0b_fedback = rotm2eul(INS.Rnb0'*INS.Rnb_fedback) * 180 / pi;
