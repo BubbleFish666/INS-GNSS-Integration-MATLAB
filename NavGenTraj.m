@@ -11,7 +11,10 @@ archive_data = false;
 % data_name = 'datafusion_not_a_very_good_result.mat';
 % data_name = 'datafusion_test_600.mat';
 % data_name = 'datafusion_a_typical_result_600.mat';
-data_name = 'datafusion_nice_result_with_GNSS_velocity.mat';
+% data_name = 'datafusion_nice_result_with_GNSS_velocity.mat';
+% data_name = 'datafusion_nice_result_with_GNSS_velocity_larger_uncertainty.mat';
+addpath("test_data\");
+data_name = 'test_data\datafusion_test_data_closed_loop_1.mat';
 
 % reference latitude and longitude
 ref.lat = ref_traj.pos_geo_incre_log(:, 2) + ref_traj.lat0 * 1000;  % milli rad
@@ -131,7 +134,9 @@ while k <= range_end
     KFpredict
 
     % KF correction
-    KFcorrect
+    if mod(k, 10) == 0
+        KFcorrect
+    end
 
     % increment step
     k = k + 1;
