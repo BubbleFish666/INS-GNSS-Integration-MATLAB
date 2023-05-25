@@ -25,21 +25,18 @@ KF.z = KF.z_pre + KF.K * (KF.y - KF.H * KF.z_pre);
 % KF.ba = KF.z(8:10);
 % KF.bg = KF.z(11:13);
 
-KF.dpsi_nb(1:2) = [0;0];
-KF.dpsi_nb(3) = KF.z(3);
-KF.Rnn = R3(KF.dpsi_nb(3));
+KF.dpsi_nb = KF.z(1);
+KF.Rnn = R3(KF.dpsi_nb);
 
-KF.dv_eb_n = KF.z(4:5);
-KF.dllh = KF.z(6:7);
+KF.dv_eb_n = KF.z(2:3);
+KF.dllh = KF.z(4:5);
 
-KF.ba(1:2) = KF.z(8:9);
-KF.ba(3) = 0;
+KF.ba(1:2) = KF.z(6:7);
 
-KF.bg(1:2) = [0;0];
-KF.bg(3) = KF.z(13);
+KF.bg = KF.z(8);
 
 % propagate covariance of estimates
-KF.P = (eye(13) - KF.K * KF.H) * KF.P * (eye(13) - KF.K * KF.H)'...
+KF.P = (eye(8) - KF.K * KF.H) * KF.P * (eye(8) - KF.K * KF.H)'...
        + KF.K * KF.R * KF.K';
 
 % % correct the INS
@@ -85,7 +82,8 @@ if mod(k, 400) == 0
     % INS.bg = INS.bg + KF.bg;
 
     % fed back errors are zeroed
-    KF.dpsi_nb = [0;0;0];
+    % KF.dpsi_nb = [0;0;0];
+    KF.dpsi_nb = 0;
     KF.dv_eb_n = [0;0];
     KF.dllh = [0;0];
     % KF.ba = [0;0;0];
