@@ -30,12 +30,12 @@ LOG.INS.llh_incre_fedback(1:range_end-range_start+1, 1:3) = nan;
 % end
 
 % KF correction
-LOG.KF.dpsi_nb(1:range_end-range_start+1, 3) = nan;
-LOG.KF.dv_eb_n(1:range_end-range_start+1, 2) = nan;
-LOG.KF.dllh(1:range_end-range_start+1, 2) = nan;
-LOG.KF.ba(1:range_end-range_start+1, 3) = nan;
-LOG.KF.bg(1:range_end-range_start+1, 3) = nan;
-LOG.KF.P(1:range_end-range_start+1, 13, 13) = nan;
+LOG.KF.dpsi_nb(1:range_end-range_start+1, 1:3) = nan;
+LOG.KF.dv_eb_n(1:range_end-range_start+1, 1:2) = nan;
+LOG.KF.dllh(1:range_end-range_start+1, 1:2) = nan;
+LOG.KF.ba(1:range_end-range_start+1, 1:3) = nan;
+LOG.KF.bg(1:range_end-range_start+1, 1:3) = nan;
+LOG.KF.P(1:range_end-range_start+1, 1:13, 1:13) = nan;
 
 % INS corrected by KF error estimate
 % LOG.INScorrected.llh(1:range_end-range_start+1, 1:3) = nan;
