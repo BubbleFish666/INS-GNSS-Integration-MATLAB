@@ -73,9 +73,10 @@ subplot(3, 1, 1)
 hold on
 grid on
 plot(t(data_range), rad2deg(LOG.KF.dpsi_nb(:, 1)))
-plot(t(data_range), rad2deg(LOG.KF.dpsi_nb(:, 2)))
-plot(t(data_range), rad2deg(LOG.KF.dpsi_nb(:, 3)))
-legend('d roll', 'd pitch', 'd yaw')
+% plot(t(data_range), rad2deg(LOG.KF.dpsi_nb(:, 2)))
+% plot(t(data_range), rad2deg(LOG.KF.dpsi_nb(:, 3)))
+% legend('d roll', 'd pitch', 'd yaw')
+legend('d yaw')
 ylabel('deg')
 
 subplot(3, 1, 2)
@@ -100,40 +101,44 @@ hold on
 grid on
 plot(t(data_range), LOG.KF.ba(:, 1))
 plot(t(data_range), LOG.KF.ba(:, 2))
-plot(t(data_range), LOG.KF.ba(:, 3))
-legend('ba x', 'ba y', 'ba z')
+% plot(t(data_range), LOG.KF.ba(:, 3))
+% legend('ba x', 'ba y', 'ba z')
+legend('ba x', 'ba y')
 
 subplot(2, 1, 2)
 hold on
 grid on
 plot(t(data_range), LOG.KF.bg(:, 1))
-plot(t(data_range), LOG.KF.bg(:, 2))
-plot(t(data_range), LOG.KF.bg(:, 3))
-legend('bg x', 'bg y', 'bg z')
+% plot(t(data_range), LOG.KF.bg(:, 2))
+% plot(t(data_range), LOG.KF.bg(:, 3))
+% legend('bg x', 'bg y', 'bg z')
+legend('bg z')
 
 %% plot error covariance
 figure('Name', 'navigation states error variance')
 subplot(3,1,1)
-plot(t(data_range), LOG.KF.P(:, 1, 1), ...
-     t(data_range), LOG.KF.P(:, 2, 2), ...
-     t(data_range), LOG.KF.P(:, 3, 3))
+% plot(t(data_range), LOG.KF.P(:, 1, 1), ...
+%      t(data_range), LOG.KF.P(:, 2, 2), ...
+%      t(data_range), LOG.KF.P(:, 3, 3))
+plot(t(data_range), LOG.KF.P(:, 1, 1))
 title('rotation error variance')
-legend('roll error variance (rad)^2', ...
-       'pitch error variance (rad)^2', ...
-       'yaw error variance (rad)^2')
+% legend('roll error variance (rad)^2', ...
+%        'pitch error variance (rad)^2', ...
+%        'yaw error variance (rad)^2')
+legend('yaw error variance (rad)^2')
 grid on
 
 subplot(3,1,2)
-plot(t(data_range), LOG.KF.P(:, 4, 4), ...
-     t(data_range), LOG.KF.P(:, 5, 5))
+plot(t(data_range), LOG.KF.P(:, 2, 2), ...
+     t(data_range), LOG.KF.P(:, 3, 3))
 title('velocity error covariance')
 legend('Vn error variance (m/s)^2', ...
        'Ve error variance (m/s)^2')
 grid on
 
 subplot(3,1,3)
-plot(t(data_range), LOG.KF.P(:, 6, 6), ...
-     t(data_range), LOG.KF.P(:, 7, 7))
+plot(t(data_range), LOG.KF.P(:, 4, 4), ...
+     t(data_range), LOG.KF.P(:, 5, 5))
 title('position error variance')
 legend('latitude error variance (milli rad)^2', ...
        'longitude error variance (milli rad)^2')
@@ -141,23 +146,29 @@ grid on
 
 figure('Name', 'IMU error variance')
 subplot(2,1,1)
-plot(t(data_range), LOG.KF.P(:, 8, 8), ...
-     t(data_range), LOG.KF.P(:, 9, 9), ...
-     t(data_range), LOG.KF.P(:, 10, 10))
+% plot(t(data_range), LOG.KF.P(:, 8, 8), ...
+%      t(data_range), LOG.KF.P(:, 9, 9), ...
+%      t(data_range), LOG.KF.P(:, 10, 10))
+plot(t(data_range), LOG.KF.P(:, 6, 6), ...
+     t(data_range), LOG.KF.P(:, 7, 7))
 title('accelerometer error variance')
 legend('ba x variance (m/s^2)^2', ...
-       'ba y variance (m/s^2)^2', ...
-       'ba z variance (m/s^2)^2')
+       'ba y variance (m/s^2)^2')
+% legend('ba x variance (m/s^2)^2', ...
+%        'ba y variance (m/s^2)^2', ...
+%        'ba z variance (m/s^2)^2')
 grid on
 
 subplot(2,1,2)
-plot(t(data_range), LOG.KF.P(:, 11, 11), ...
-     t(data_range), LOG.KF.P(:, 12, 12), ...
-     t(data_range), LOG.KF.P(:, 13, 13))
+plot(t(data_range), LOG.KF.P(:, 8, 8))
+% plot(t(data_range), LOG.KF.P(:, 11, 11), ...
+%      t(data_range), LOG.KF.P(:, 12, 12), ...
+%      t(data_range), LOG.KF.P(:, 13, 13))
 title('gyro error variance')
-legend('bg x variance (rad/s)^2', ...
-       'bg y variance (rad/s)^2', ...
-       'bg z variance (rad/s)^2')
+legend('bg z variance (rad/s)^2')
+% legend('bg x variance (rad/s)^2', ...
+%        'bg y variance (rad/s)^2', ...
+%        'bg z variance (rad/s)^2')
 grid on
 
 %% plot INS corrected states
