@@ -3,7 +3,8 @@
 KF.dpsi_nb_ = KF.dpsi_nb;
 % KF.dpsi_nb = KF.dpsi_nb_ + INS.Rnb_fedback * T * KF.bg;
 % KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
-KF.dpsi_nb = KF.dpsi_nb_ + INS.Rnb_fedback * T * [0; 0; KF.bg(3)];
+% KF.dpsi_nb = KF.dpsi_nb_ + INS.Rnb_fedback * T * [0; 0; KF.bg(3)];
+KF.dpsi_nb = KF.dpsi_nb_ + T * [0; 0; KF.bg(3)];
 KF.Rnn = R3(KF.dpsi_nb(3));
 
 % velocity
@@ -18,8 +19,10 @@ KF.F21n = [0, 0, -KF.f_ib_n(2);
 KF.F23n = zeros(2);
 % KF.dv_eb_n = KF.dv_eb_n_ + KF.F21n * T * KF.dpsi_nb_...
 %              + KF.F23n * T * KF.dllh + INS.Rnb_fedback(1:2, 1:3) * T * KF.ba;
+% KF.dv_eb_n = KF.dv_eb_n_ + KF.F21n * T * KF.dpsi_nb_...
+%              + KF.F23n * T * KF.dllh + INS.Rnb_fedback(1:2, 1:3) * T * [KF.ba(1); KF.ba(2); 0];
 KF.dv_eb_n = KF.dv_eb_n_ + KF.F21n * T * KF.dpsi_nb_...
-             + KF.F23n * T * KF.dllh + INS.Rnb_fedback(1:2, 1:3) * T * [KF.ba(1); KF.ba(2); 0];
+             + KF.F23n * T * KF.dllh + INS.Rnb_fedback(1:2, 1:2) * T * [KF.ba(1); KF.ba(2)];
 
 % position
 KF.F32n = [1 * llh_scale / (meridionalRadius(INS.lat_fedback / llh_scale) + INS.h), 0;
@@ -27,8 +30,10 @@ KF.F32n = [1 * llh_scale / (meridionalRadius(INS.lat_fedback / llh_scale) + INS.
 KF.dllh = KF.dllh + KF.F32n * T * KF.dv_eb_n_;  % milli rad
 
 % covariance of estimate
-KF.PHI = [eye(3), zeros(3,2), zeros(3,2), zeros(3), INS.Rnb_fedback * T;
-          KF.F21n * T, eye(2), KF.F23n * T, INS.Rnb_fedback(1:2, 1:3) * T, zeros(2,3);
+% KF.PHI = [eye(3), zeros(3,2), zeros(3,2), zeros(3), INS.Rnb_fedback * T;
+           % KF.F21n * T, eye(2), KF.F23n * T, INS.Rnb_fedback(1:2, 1:3) * T, zeros(2,3);
+KF.PHI = [eye(3), zeros(3,2), zeros(3,2), zeros(3), eye(3) * T;
+          KF.F21n * T, eye(2), KF.F23n * T, [INS.Rnb_fedback(1:2, 1:2),[0;0]] * T, zeros(2,3);
           zeros(2,3), KF.F32n * T, eye(2), zeros(2,3), zeros(2,3);
           zeros(3), zeros(3,2), zeros(3,2), eye(3), zeros(3);
           zeros(3), zeros(3,2), zeros(3,2), zeros(3), eye(3)];

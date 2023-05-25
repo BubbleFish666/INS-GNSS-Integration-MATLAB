@@ -125,7 +125,7 @@ INS.eul_b0b_fedback = rotm2eul(INS.Rnb0'*INS.Rnb_fedback) * 180 / pi;
 LOG.INS.eul_b0b_fedback(k-range_start+1, :) = INS.eul_b0b_fedback;
 
 % velocity in local navigation frame
-LOG.INS.v_eb_n_fedback(k-range_start+1, :) = INS.v_eb_n_fedback;
+LOG.INS.v_eb_n_fedback(k-range_start+1, :) = INS.v_eb_n_fedback';
 
 % latitude and longtitude
 LOG.INS.llh_fedback(k-range_start+1, :) = [INS.lat_fedback, INS.lon_fedback, INS.h];

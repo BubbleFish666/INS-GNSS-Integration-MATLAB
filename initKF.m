@@ -60,10 +60,10 @@ KF.Q = zeros(13);
 % KF.Q(4:5, 4:5) = (50 * 120e-6 * 10)^2 * T * eye(2);  % accelorometer noise 120 ug/sqr(Hz)
 % KF.Q(8:10, 8:10) = (50 * 0.04e-3 * 10)^2 * eye(3);  % accelerometer dynamic bias 0.04 mg
 % KF.Q(11:13, 11:13) = (10 * deg2rad(10) / 3600)^2 * eye(3);  % gyro dynamic bias 10 deg/h
-KF.Q(3 ,3) = (10 * deg2rad(0.007))^2 * T;  % gyro noise 0.007 deg/s/sqr(Hz)
-KF.Q(4:5 , 4:5) = (50 * 120e-6 * 10)^2 * T * eye(2);  % accelorometer noise 120 ug/sqr(Hz)
-KF.Q(8:9, 8:9) = (50 * 0.04e-3 * 10)^2 * eye(2);  % accelerometer dynamic bias 0.04 mg
-KF.Q(13, 13) = (10 * deg2rad(10) / 3600)^2;  % gyro dynamic bias 10 deg/h
+KF.Q(3 ,3) = (2 * deg2rad(0.007))^2 * T;  % gyro noise 0.007 deg/s/sqr(Hz)
+KF.Q(4:5 , 4:5) = (5 * 120e-6 * 10)^2 * T * eye(2);  % accelorometer noise 120 ug/sqr(Hz)
+KF.Q(8:9, 8:9) = (5 * 0.04e-3 * 10)^2 * eye(2);  % accelerometer dynamic bias 0.04 mg
+KF.Q(13, 13) = (2 * deg2rad(10) / 3600)^2;  % gyro dynamic bias 10 deg/h
 
 % measurement noise
 % error from GNSS 2.0m horizontal (only consider GNSS horizontal data)
