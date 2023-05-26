@@ -14,7 +14,8 @@ archive_data = true;
 % data_name = 'datafusion_nice_result_with_GNSS_velocity.mat';
 % data_name = 'datafusion_nice_result_with_GNSS_velocity_larger_uncertainty.mat';
 addpath("test_data\");
-data_name = 'test_data\datafusion_test_data_1.mat';
+% data_name = 'test_data\datafusion_test_data_1.mat';
+data_name = 'temp.mat';
 
 % reference latitude and longitude
 ref.lat = ref_traj.pos_geo_incre_log(:, 2) + ref_traj.lat0 * 1000;  % milli rad
