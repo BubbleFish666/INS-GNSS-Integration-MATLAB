@@ -67,15 +67,15 @@ if mod(k, 40) == 0
     INS.v_eb_n_fedback = INS.v_eb_n_fedback + KF.dv_eb_n;
     INS.lat_incre_total_fedback = INS.lat_incre_total_fedback + KF.dllh(1);
     INS.lon_incre_total_fedback = INS.lon_incre_total_fedback + KF.dllh(2);
-    % INS.ba = INS.ba + KF.ba;
-    % INS.bg = INS.bg + KF.bg;
+    INS.ba = INS.ba + KF.ba;
+    INS.bg = INS.bg + KF.bg;
 
     % fed back errors are zeroed
     KF.dpsi_nb = [0;0;0];
     KF.dv_eb_n = [0;0];
     KF.dllh = [0;0];
-    % KF.ba = [0;0;0];
-    % KF.bg = [0;0;0];
+    KF.ba = [0;0;0];
+    KF.bg = [0;0;0];
 end
 
 %% logging
