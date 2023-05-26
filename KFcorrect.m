@@ -62,7 +62,7 @@ INS.eul_b0b_corrected = rotm2eul(INS.Rnb0' * KF.Rnn * INS.Rnb_fedback) * 180 / p
 
 %% feed back corrections to INS
 % every 0.025 s * 400 = 10 s
-if mod(k, 400) == 0
+if mod(k, 40) == 0
     INS.Rnb_fedback = KF.Rnn * INS.Rnb_fedback;
     INS.v_eb_n_fedback = INS.v_eb_n_fedback + KF.dv_eb_n;
     INS.lat_incre_total_fedback = INS.lat_incre_total_fedback + KF.dllh(1);

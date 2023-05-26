@@ -33,12 +33,12 @@ KF.P = zeros(13);
 % KF.P(1,1) = 0.002^2;  % roll variance (0.002 rad)^2
 % KF.P(2,2) = 0.002^2;  % pitch variance (0.002 rad)^2
 % KF.P(3,3) = 0.02^2;  % yaw variance (0.02 rad)^2
-KF.P(1,1) = deg2rad(8)^2;  % roll variance
-KF.P(2,2) = deg2rad(8)^2;  % pitch variance
-KF.P(3,3) = deg2rad(8)^2;  % yaw variance
-KF.P(4,4) = 0.5^2;  % north velocity variance (1.0 m/s)^2
-KF.P(5,5) = 0.5^2;  % east velocity variance (1.0 m/s)^2
-KF.P(6,6) = (4.0 * llh_scale / meridionalRadius(INS.lat0 / llh_scale))^2;  % GNSS horizontal accuracy 2m -> lat (milli rad)^2
+KF.P(1,1) = deg2rad(2)^2;  % roll variance
+KF.P(2,2) = deg2rad(2)^2;  % pitch variance
+KF.P(3,3) = deg2rad(4)^2;  % yaw variance
+KF.P(4,4) = 0.05^2;  % north velocity variance (1.0 m/s)^2
+KF.P(5,5) = 0.05^2;  % east velocity variance (1.0 m/s)^2
+KF.P(6,6) = (2.5 * llh_scale / meridionalRadius(INS.lat0 / llh_scale))^2;  % GNSS horizontal accuracy 2m -> lat (milli rad)^2
 KF.P(7,7) = (4.0 * llh_scale / transverseRadius(INS.lat0 / llh_scale) / cos(INS.lat0 / llh_scale))^2;  % GNSS horizontal accuracy 2m -> lon (milli rad)^2
 KF.P(8,8) = (0.03e-3 * 10)^2;  % accelorometer bias (0.03 mg)^2
 KF.P(9,9) = (0.03e-3 * 10)^2;  % accelorometer bias (0.03 mg)^2
@@ -68,7 +68,7 @@ KF.Q(11:13, 11:13) = (10 * deg2rad(10) / 3600)^2 * eye(3);  % gyro dynamic bias 
 % error from GNSS 2.0m horizontal (only consider GNSS horizontal data)
 % KF.R = [(2.0 * llh_scale / meridionalRadius(INS.lat / llh_scale))^2, 0;
 %         0, (2.0 * llh_scale / transverseRadius(INS.lat / llh_scale) / cos(INS.lat / llh_scale))^2];
-KF.R = [0.5^2, 0, 0, 0;
-        0, 0.5^2, 0, 0;
-        0, 0, (4.0 * llh_scale / meridionalRadius(INS.lat / llh_scale))^2, 0;
+KF.R = [0.05^2, 0, 0, 0;
+        0, 0.05^2, 0, 0;
+        0, 0, (2.5 * llh_scale / meridionalRadius(INS.lat / llh_scale))^2, 0;
         0, 0, 0, (4.0 * llh_scale / transverseRadius(INS.lat / llh_scale) / cos(INS.lat / llh_scale))^2];
