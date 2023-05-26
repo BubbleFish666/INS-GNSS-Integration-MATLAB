@@ -17,7 +17,8 @@ archive_data = true;
 addpath("test_data\");
 % data_name = 'test_data\datafusion_test_data_closed_loop_1.mat';
 % data_name = 'closed-loop-KF-tuning\4\tuning_result.mat';
-data_name = 'test_data\datafusion_test_data_closed_loop_2d_1.mat';
+% data_name = 'test_data\datafusion_test_data_closed_loop_2d_1.mat';
+data_name = 'temp.mat';
 
 % reference latitude and longitude
 ref.lat = ref_traj.pos_geo_incre_log(:, 2) + ref_traj.lat0 * 1000;  % milli rad
