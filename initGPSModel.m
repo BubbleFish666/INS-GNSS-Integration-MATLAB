@@ -10,6 +10,6 @@ GPSModel.SampleRate = 40;  % Hz
 % GPSModel.ReferenceLocation = lla0;
 
 GPSModel.PositionInputFormat = "Geodetic";  % takes llh as input
-GPSModel.HorizontalPositionAccuracy = 4.0;  % meter
+GPSModel.HorizontalPositionAccuracy = 2.5;  % meter
 GPSModel.VerticalPositionAccuracy = 4.0;  % meter
-GPSModel.VelocityAccuracy = 0.5;  % m/s
+GPSModel.VelocityAccuracy = 0.05;  % m/s
