@@ -68,7 +68,7 @@ KF.Q(11:13, 11:13) = (deg2rad(10) / 3600)^2 * eye(3);  % gyro dynamic bias 10 de
 % error from GNSS 2.0m horizontal (only consider GNSS horizontal data)
 % KF.R = [(2.0 * llh_scale / meridionalRadius(INS.lat / llh_scale))^2, 0;
 %         0, (2.0 * llh_scale / transverseRadius(INS.lat / llh_scale) / cos(INS.lat / llh_scale))^2];
-KF.R = [0.5^2, 0, 0, 0;
-        0, 0.5^2, 0, 0;
-        0, 0, (4.0 * llh_scale / meridionalRadius(INS.lat / llh_scale))^2, 0;
+KF.R = [0.05^2, 0, 0, 0;
+        0, 0.05^2, 0, 0;
+        0, 0, (2.5 * llh_scale / meridionalRadius(INS.lat / llh_scale))^2, 0;
         0, 0, 0, (4.0 * llh_scale / transverseRadius(INS.lat / llh_scale) / cos(INS.lat / llh_scale))^2];
