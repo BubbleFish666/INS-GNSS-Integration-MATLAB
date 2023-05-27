@@ -55,12 +55,18 @@ INS.v_eb_n_ = INS.v_eb_n;
 % INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0 * INS.f_ib_b0 * T;
 % INS.v_eb_n(3) = 0;  % disable velocity in Down direction
 % INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0(1:2, 1:3) * INS.f_ib_b0 * T;
-INS.v_eb_n = INS.v_eb_n_ + INS.Rnb_(1:2, 1:3) * INS.f_ib_b * T;
+% INS.v_eb_n = INS.v_eb_n_ + INS.Rnb_(1:2, 1:3) * INS.f_ib_b * T;
+%%%%%%%%%%%%%% this v_incre doesn't make a diffrence as the above line, but
+%%%%%%%%%%%%%% is more understandable
+INS.v_incre = (INS.Rnb_ * INS.f_ib_b + [0; 0; 9.81]) * T;
+INS.v_eb_n = INS.v_eb_n_ + INS.v_incre(1:2);
 
 % fedback INS
 INS.v_eb_n_fedback_ = INS.v_eb_n_fedback;
+INS.v_incre_fedback = (INS.Rnb_fedback_ * INS.f_ib_b_fedback + [0; 0; 9.81]) * T;
 INS.v_eb_n_fedback = INS.v_eb_n_fedback_ ...
-                     + INS.Rnb_fedback_(1:2, 1:3) * INS.f_ib_b_fedback * T;
+                     + INS.v_incre_fedback(1:2);
+                     % + INS.Rnb_fedback_(1:2, 1:3) * INS.f_ib_b_fedback * T;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% position %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % raw INS

@@ -8,7 +8,7 @@ ref_traj = load("reference_trajectory_data\trajData600.mat");
 t = ref_traj.timeVector(2:end);
 
 % use saved sensor data
-archive_data = true;
+archive_data = false;
 % data_name = 'datafusion_not_a_very_good_result.mat';
 % data_name = 'datafusion_test_600.mat';
 % data_name = 'datafusion_a_typical_result_600.mat';
@@ -45,7 +45,8 @@ else
                                    [ref.gyrox, ref.gyroy, ref.gyroz]);
     IMU.faccx = -single(IMU_acc(:, 1));  % m/s^2
     IMU.faccy = -single(IMU_acc(:, 2));  % m/s^2
-    IMU.faccz = -single(IMU_acc(:, 3) - 9.81);  % m/s^2
+    % IMU.faccz = -single(IMU_acc(:, 3) - 9.81);  % m/s^2
+    IMU.faccz = single(IMU_acc(:, 3));  % m/s^2
     IMU.gyrox = single(IMU_gyro(:, 1));  % rad/s
     IMU.gyroy = single(IMU_gyro(:, 2));  % rad/s
     IMU.gyroz = single(IMU_gyro(:, 3));  % rad/s
