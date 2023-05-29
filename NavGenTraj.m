@@ -54,10 +54,10 @@ else
     initGPSModel
     [GPS_pos, GPS_vel, ~, ~] = GPSModel([rad2deg(ref.lat * 0.001), rad2deg(ref.lon * 0.001), zeros(size(ref.lat))],...
                                   [ref.VeloE, ref.VeloN, zeros(size(ref.VeloE))]);
-    GNSS.lat_GNSS = deg2rad(GPS_pos(:, 1));  % deg -> rad
-    GNSS.lon_GNSS = deg2rad(GPS_pos(:, 2));  % deg -> rad
-    GNSS.ve_GNSS = GPS_vel(:, 1);  % m/s
-    GNSS.vn_GNSS = GPS_vel(:, 2);  % m/s
+    GNSS.lat_GNSS = single(deg2rad(GPS_pos(:, 1)));  % deg -> rad
+    GNSS.lon_GNSS = single(deg2rad(GPS_pos(:, 2)));  % deg -> rad
+    GNSS.ve_GNSS = single(GPS_vel(:, 1));  % m/s
+    GNSS.vn_GNSS = single(GPS_vel(:, 2));  % m/s
 end
 
 %% plot simulated IMU data
