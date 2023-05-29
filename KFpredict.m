@@ -19,7 +19,7 @@ KF.F32n = [1 * llh_scale / (meridionalRadius(INS.lat_fedback / llh_scale) + INS.
            0, 1 * llh_scale / ((transverseRadius(INS.lat_fedback / llh_scale) + INS.h) * cos(INS.lat_fedback / llh_scale))];
 KF.dllh = KF.dllh + KF.F32n * T * KF.dv_eb_n_;  % milli rad
 
-% covariance of estimate
+% transition matrix
 KF.PHI = [eye(3), zeros(3,2), zeros(3,2), zeros(3), INS.Rnb_fedback * T;
           KF.F21n * T, eye(2), KF.F23n * T, INS.Rnb_fedback(1:2, 1:3) * T, zeros(2,3);
           zeros(2,3), KF.F32n * T, eye(2), zeros(2,3), zeros(2,3);
