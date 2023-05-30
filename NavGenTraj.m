@@ -8,7 +8,7 @@ ref_traj = load("trajData600.mat");
 t = ref_traj.timeVector(2:end);
 
 % use saved sensor data
-archive_data = true;
+archive_data = false;
 % data_name = 'datafusion_not_a_very_good_result.mat';
 % data_name = 'datafusion_test_600.mat';
 % data_name = 'datafusion_a_typical_result_600.mat';
