@@ -75,22 +75,27 @@ INS.eul_b0b_corrected = rotm2eul(INS.Rnb0' * KF.Rnn * INS.Rnb_fedback) * 180 / p
 % INS.eul_b0b_corrected(1) = changeDegRange360(INS.eul_b0b_corrected(1));
 
 %% feed back corrections to INS
-% every 0.025 s * 40 = 1.0 s
-if mod(k, 40) == 0
-    INS.Rnb_fedback = KF.Rnn * INS.Rnb_fedback;
-    INS.v_eb_n_fedback = INS.v_eb_n_fedback + KF.dv_eb_n;
-    INS.lat_incre_total_fedback = INS.lat_incre_total_fedback + KF.dllh(1);
-    INS.lon_incre_total_fedback = INS.lon_incre_total_fedback + KF.dllh(2);
-    INS.ba = INS.ba + KF.ba;
-    INS.bg = INS.bg + KF.bg;
+INS.Rnb_fedback = KF.Rnn * INS.Rnb_fedback;
+INS.v_eb_n_fedback = INS.v_eb_n_fedback + KF.dv_eb_n;
+INS.lat_incre_total_fedback = INS.lat_incre_total_fedback + KF.dllh(1);
+INS.lon_incre_total_fedback = INS.lon_incre_total_fedback + KF.dllh(2);
+INS.ba = INS.ba + KF.ba;
+INS.bg = INS.bg + KF.bg;
 
-    % fed back errors are zeroed
-    KF.dpsi_nb = [0;0;0];
-    KF.dv_eb_n = [0;0];
-    KF.dllh = [0;0];
-    KF.ba = [0;0;0];
-    KF.bg = [0;0;0];
-end
+% log KF error states
+LOG.KF.dpsi_nb(k - range_start + 1, :) = KF.dpsi_nb;
+LOG.KF.dv_eb_n(k - range_start + 1, :) = KF.dv_eb_n;
+LOG.KF.dllh(k - range_start + 1, :) = KF.dllh;
+LOG.KF.ba(k - range_start + 1, :) = KF.ba;
+LOG.KF.bg(k - range_start + 1, :) = KF.bg;
+LOG.KF.P(k - range_start + 1, :, :) = KF.P;
+
+% fed back errors are zeroed
+KF.dpsi_nb = [0;0;0];
+KF.dv_eb_n = [0;0];
+KF.dllh = [0;0];
+KF.ba = [0;0;0];
+KF.bg = [0;0;0];
 
 %% logging
 % LOG.KF.dpsi_nb(2 * (k - range_start + 1), :) = KF.dpsi_nb;
@@ -99,14 +104,6 @@ end
 % LOG.KF.ba(2 * (k - range_start + 1), :) = KF.ba;
 % LOG.KF.bg(2 * (k - range_start + 1), :) = KF.bg;
 % LOG.KF.P{2 * (k - range_start + 1)} = KF.P;
-
-% KF error states
-LOG.KF.dpsi_nb(k - range_start + 1, :) = KF.dpsi_nb;
-LOG.KF.dv_eb_n(k - range_start + 1, :) = KF.dv_eb_n;
-LOG.KF.dllh(k - range_start + 1, :) = KF.dllh;
-LOG.KF.ba(k - range_start + 1, :) = KF.ba;
-LOG.KF.bg(k - range_start + 1, :) = KF.bg;
-LOG.KF.P(k - range_start + 1, :, :) = KF.P;
 
 % INS corrected
 % LOG.INS.eul_nb_corrected(k - range_start + 1, :) = INS.eul_nb_corrected;
