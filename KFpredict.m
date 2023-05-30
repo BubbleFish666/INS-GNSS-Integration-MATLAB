@@ -12,7 +12,6 @@
 KF.f_ib_n = INS.Rnb_fedback * (INS.f_ib_b_fedback);
 KF.F21n = [0, KF.f_ib_n(3), -KF.f_ib_n(2);
            -KF.f_ib_n(3), 0, KF.f_ib_n(1)];
-
 KF.F23n = zeros(2);
 % KF.dv_eb_n = KF.dv_eb_n_ + KF.F21n * T * KF.dpsi_nb_...
 %              + KF.F23n * T * KF.dllh + INS.Rnb_fedback(1:2, 1:3) * T * KF.ba;
