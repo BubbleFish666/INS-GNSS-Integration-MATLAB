@@ -1,8 +1,6 @@
 %% read data from IMU
-% INS.w_ib_b = [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)];
-% INS.w_ib_b_fedback = [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)] + INS.bg;
-INS.w_ib_b = [0; 0; IMU.gyroz(k)];
-INS.w_ib_b_fedback = [0; 0; IMU.gyroz(k)] + INS.bg;
+INS.w_ib_b = [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)];
+INS.w_ib_b_fedback = [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)] + INS.bg;
 
 % note that fAcc are already compensated by sensor with gravity
 % it seems that the Free Acc is measured in a global floating frame
@@ -10,10 +8,8 @@ INS.w_ib_b_fedback = [0; 0; IMU.gyroz(k)] + INS.bg;
 % offset), f_ib_b0 represents the acc measured in b0 frame.
 % INS.f_ib_b0 = INS.R_board_facc * [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
 
-% INS.f_ib_b = [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
-% INS.f_ib_b_fedback = [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)] + INS.ba;
-INS.f_ib_b = [IMU.faccx(k); IMU.faccy(k); 0];
-INS.f_ib_b_fedback = [IMU.faccx(k); IMU.faccy(k); 0] + INS.ba;
+INS.f_ib_b = [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
+INS.f_ib_b_fedback = [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)] + INS.ba;
 
 %% strapdown solution
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% rotation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

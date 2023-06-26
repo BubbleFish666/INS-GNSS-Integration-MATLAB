@@ -18,27 +18,13 @@ KF.K = KF.P * KF.H' * KF.S^(-1);
 % update z
 KF.z = KF.z_pre + KF.K * (KF.y - KF.H * KF.z_pre);
 
-% KF.dpsi_nb = KF.z(1:3);
-% KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
-% KF.dv_eb_n = KF.z(4:5);
-% KF.dllh = KF.z(6:7);
-% KF.ba = KF.z(8:10);
-% KF.bg = KF.z(11:13);
-
-KF.dpsi_nb(1:2) = [0;0];
-KF.dpsi_nb(3) = KF.z(3);
-KF.Rnn = R3(KF.dpsi_nb(3));
-
+KF.dpsi_nb = KF.z(1:3);
+KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
 KF.dv_eb_n = KF.z(4:5);
 KF.dllh = KF.z(6:7);
+KF.ba = KF.z(8:10);
+KF.bg = KF.z(11:13);
 
-KF.ba(1:2) = KF.z(8:9);
-KF.ba(3) = 0;
-
-KF.bg(1:2) = [0;0];
-KF.bg(3) = KF.z(13);
-
-% propagate covariance of estimates
 KF.P = (eye(13) - KF.K * KF.H) * KF.P * (eye(13) - KF.K * KF.H)'...
        + KF.K * KF.R * KF.K';
 
@@ -75,22 +61,27 @@ INS.eul_b0b_corrected = rotm2eul(INS.Rnb0' * KF.Rnn * INS.Rnb_fedback) * 180 / p
 % INS.eul_b0b_corrected(1) = changeDegRange360(INS.eul_b0b_corrected(1));
 
 %% feed back corrections to INS
-% every 0.025 s * 40 = 1.0 s
-if mod(k, 40) == 0
-    INS.Rnb_fedback = KF.Rnn * INS.Rnb_fedback;
-    INS.v_eb_n_fedback = INS.v_eb_n_fedback + KF.dv_eb_n;
-    INS.lat_incre_total_fedback = INS.lat_incre_total_fedback + KF.dllh(1);
-    INS.lon_incre_total_fedback = INS.lon_incre_total_fedback + KF.dllh(2);
-    INS.ba = INS.ba + KF.ba;
-    INS.bg = INS.bg + KF.bg;
+INS.Rnb_fedback = KF.Rnn * INS.Rnb_fedback;
+INS.v_eb_n_fedback = INS.v_eb_n_fedback + KF.dv_eb_n;
+INS.lat_incre_total_fedback = INS.lat_incre_total_fedback + KF.dllh(1);
+INS.lon_incre_total_fedback = INS.lon_incre_total_fedback + KF.dllh(2);
+INS.ba = INS.ba + KF.ba;
+INS.bg = INS.bg + KF.bg;
 
-    % fed back errors are zeroed
-    KF.dpsi_nb = [0;0;0];
-    KF.dv_eb_n = [0;0];
-    KF.dllh = [0;0];
-    KF.ba = [0;0;0];
-    KF.bg = [0;0;0];
-end
+% log KF error states
+LOG.KF.dpsi_nb(k - range_start + 1, :) = KF.dpsi_nb;
+LOG.KF.dv_eb_n(k - range_start + 1, :) = KF.dv_eb_n;
+LOG.KF.dllh(k - range_start + 1, :) = KF.dllh;
+LOG.KF.ba(k - range_start + 1, :) = KF.ba;
+LOG.KF.bg(k - range_start + 1, :) = KF.bg;
+LOG.KF.P(k - range_start + 1, :, :) = KF.P;
+
+% fed back errors are zeroed
+KF.dpsi_nb = [0;0;0];
+KF.dv_eb_n = [0;0];
+KF.dllh = [0;0];
+KF.ba = [0;0;0];
+KF.bg = [0;0;0];
 
 %% logging
 % LOG.KF.dpsi_nb(2 * (k - range_start + 1), :) = KF.dpsi_nb;
@@ -99,14 +90,6 @@ end
 % LOG.KF.ba(2 * (k - range_start + 1), :) = KF.ba;
 % LOG.KF.bg(2 * (k - range_start + 1), :) = KF.bg;
 % LOG.KF.P{2 * (k - range_start + 1)} = KF.P;
-
-% KF error states
-LOG.KF.dpsi_nb(k - range_start + 1, :) = KF.dpsi_nb;
-LOG.KF.dv_eb_n(k - range_start + 1, :) = KF.dv_eb_n;
-LOG.KF.dllh(k - range_start + 1, :) = KF.dllh;
-LOG.KF.ba(k - range_start + 1, :) = KF.ba;
-LOG.KF.bg(k - range_start + 1, :) = KF.bg;
-LOG.KF.P(k - range_start + 1, :, :) = KF.P;
 
 % INS corrected
 % LOG.INS.eul_nb_corrected(k - range_start + 1, :) = INS.eul_nb_corrected;

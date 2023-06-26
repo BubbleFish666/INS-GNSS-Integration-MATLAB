@@ -2,8 +2,8 @@
 clear; close all;
 
 % select reference trajectory
-addpath("reference_trajectory_data\");
-ref_traj = load("reference_trajectory_data\trajData600.mat");
+addpath("reference_trajectory_data");
+ref_traj = load("trajData600.mat");
 % ref_traj = load("trajData200.mat");
 t = ref_traj.timeVector(2:end);
 
@@ -14,7 +14,7 @@ archive_data = false;
 % data_name = 'datafusion_a_typical_result_600.mat';
 % data_name = 'datafusion_nice_result_with_GNSS_velocity.mat';
 % data_name = 'datafusion_nice_result_with_GNSS_velocity_larger_uncertainty.mat';
-addpath("test_data\");
+addpath("test_data");
 % data_name = 'test_data\datafusion_test_data_closed_loop_1.mat';
 data_name = 'temp.mat';
 
@@ -55,10 +55,10 @@ else
     initGPSModel
     [GPS_pos, GPS_vel, ~, ~] = GPSModel([rad2deg(ref.lat * 0.001), rad2deg(ref.lon * 0.001), zeros(size(ref.lat))],...
                                   [ref.VeloE, ref.VeloN, zeros(size(ref.VeloE))]);
-    GNSS.lat_GNSS = deg2rad(GPS_pos(:, 1));  % deg -> rad
-    GNSS.lon_GNSS = deg2rad(GPS_pos(:, 2));  % deg -> rad
-    GNSS.ve_GNSS = GPS_vel(:, 1);  % m/s
-    GNSS.vn_GNSS = GPS_vel(:, 2);  % m/s
+    GNSS.lat_GNSS = single(deg2rad(GPS_pos(:, 1)));  % deg -> rad
+    GNSS.lon_GNSS = single(deg2rad(GPS_pos(:, 2)));  % deg -> rad
+    GNSS.ve_GNSS = single(GPS_vel(:, 1));  % m/s
+    GNSS.vn_GNSS = single(GPS_vel(:, 2));  % m/s
 end
 
 %% plot simulated IMU data
