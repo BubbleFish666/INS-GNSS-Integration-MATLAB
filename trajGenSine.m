@@ -102,8 +102,8 @@ figure(1)
 plot(tInfo.Waypoints(1,1),tInfo.Waypoints(1,2),"b*")
 title("Position")
 % axis([20,65,0,25])
-xlabel("East")
-ylabel("North")
+xlabel("East (m)")
+ylabel("North (m)")
 grid on
 % xlim([0, 80])
 % ylim([0, 80])
@@ -112,7 +112,7 @@ hold on
 % figure(1)
 plot(pos_log(:, 1),pos_log(:, 2),"b")
 grid on
-
+%%
 eulerAngles = rad2deg(rotm2eul(permute(orient_log, [2 3 1])));
 % range = 2:100:8742;
 sample_length = length(pos_log(:, 1));
@@ -183,7 +183,7 @@ plot(timeVector(2:end),velb_log(:,1), ...
      timeVector(2:end),velb_log(:,2), ...
      timeVector(2:end),velb_log(:,3));
 title("Velocity In Body Frame Over Time")
-legend("East","North","Up")
+legend("x","y","z")
 xlabel("Time (seconds)")
 ylabel("Velocity (m/s)")
 grid on
@@ -193,7 +193,7 @@ plot(timeVector(2:end),accb_log(:,1), ...
      timeVector(2:end),accb_log(:,2), ...
      timeVector(2:end),accb_log(:,3));
 title("Acceleration In Body Frame Over Time")
-legend("East","North","Up")
+legend("x","y","z")
 xlabel("Time (seconds)")
 ylabel("Acceleration (m/s^2)")
 grid on
@@ -203,7 +203,7 @@ plot(timeVector(2:end),angVelb_log(:,1), ...
      timeVector(2:end),angVelb_log(:,2), ...
      timeVector(2:end),angVelb_log(:,3));
 title("Angular Velocity In Body Frame Over Time")
-legend("East","North","Up")
+legend("x","y","z")
 xlabel("Time (seconds)")
 ylabel("Angular Velocity (rad/s)")
 grid on
