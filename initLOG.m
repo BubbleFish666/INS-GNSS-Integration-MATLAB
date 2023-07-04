@@ -17,18 +17,6 @@ LOG.INS.llh_fedback(1:range_end-range_start+1, 1:3) = nan;
 LOG.INS.llh_incre_total_fedback(1:range_end-range_start+1, 1:3) = nan;
 LOG.INS.llh_incre_fedback(1:range_end-range_start+1, 1:3) = nan;
 
-% KF prediction and correction
-% LOG.KF.dpsi_nb(1:2*(range_end-range_start+1), 3) = nan;
-% LOG.KF.dv_eb_n(1:2*(range_end-range_start+1), 3) = nan;
-% LOG.KF.dllh(1:2*(range_end-range_start+1), 3) = nan;
-% LOG.KF.ba(1:2*(range_end-range_start+1), 3) = nan;
-% LOG.KF.bg(1:2*(range_end-range_start+1), 3) = nan;
-% 
-% LOG.KF.P = cell(2*(range_end-range_start+1), 1);
-% for i = 1:2*(range_end-range_start+1)
-%     LOG.KF.P{i}(1:15, 1:15) = nan;
-% end
-
 % KF correction
 LOG.KF.dpsi_nb(1:range_end-range_start+1, 1:3) = nan;
 LOG.KF.dv_eb_n(1:range_end-range_start+1, 1:2) = nan;
