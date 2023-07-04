@@ -1,25 +1,12 @@
 %% KF propagation
 % Due to zeroing all error states upon feed back, there is no need to
 % propagate the states (always zero) any more.
-% % attitude
-% KF.dpsi_nb_ = KF.dpsi_nb;
-% KF.dpsi_nb = KF.dpsi_nb_ + INS.Rnb_fedback * T * KF.bg;
-% KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
-
-% % velocity
-% KF.dv_eb_n_ = KF.dv_eb_n;
-% KF.f_ib_n = INS.Rnb_fedback * (INS.f_ib_b_fedback + [0; 0; 9.81]);
 KF.f_ib_n = INS.Rnb_fedback * (INS.f_ib_b_fedback);
 KF.F21n = [0, KF.f_ib_n(3), -KF.f_ib_n(2);
            -KF.f_ib_n(3), 0, KF.f_ib_n(1)];
 KF.F23n = zeros(2);
-% KF.dv_eb_n = KF.dv_eb_n_ + KF.F21n * T * KF.dpsi_nb_...
-%              + KF.F23n * T * KF.dllh + INS.Rnb_fedback(1:2, 1:3) * T * KF.ba;
-
-% % position
 KF.F32n = [1 * llh_scale / (meridionalRadius(INS.lat_fedback / llh_scale) + INS.h), 0;
            0, 1 * llh_scale / ((transverseRadius(INS.lat_fedback / llh_scale) + INS.h) * cos(INS.lat_fedback / llh_scale))];
-% KF.dllh = KF.dllh + KF.F32n * T * KF.dv_eb_n_;  % milli rad
 
 % transition matrix
 KF.PHI = [eye(3), zeros(3,2), zeros(3,2), zeros(3), INS.Rnb_fedback * T;
@@ -28,16 +15,6 @@ KF.PHI = [eye(3), zeros(3,2), zeros(3,2), zeros(3), INS.Rnb_fedback * T;
           zeros(3), zeros(3,2), zeros(3,2), eye(3), zeros(3);
           zeros(3), zeros(3,2), zeros(3,2), zeros(3), eye(3)];
 KF.P = KF.PHI * KF.P * KF.PHI' + KF.Q;
-
-% % correct the fedback INS
-% INS.llh_incre_total_corrected = [INS.lat_incre_total_fedback + KF.dllh(1);
-%                                  INS.lon_incre_total_fedback + KF.dllh(2);
-%                                  0];
-% INS.llh_corrected = [INS.lat0 + INS.llh_incre_total_corrected(1);
-%                      INS.lon0 + INS.llh_incre_total_corrected(2);
-%                      0];
-% 
-% INS.v_eb_n_corrected = INS.v_eb_n_fedback + KF.dv_eb_n;
 
 % correct the fedback INS
 INS.llh_incre_total_corrected = [INS.lat_incre_total_fedback;

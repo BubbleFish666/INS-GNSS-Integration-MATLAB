@@ -2,12 +2,6 @@
 INS.w_ib_b = [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)];
 INS.w_ib_b_fedback = [IMU.gyrox(k); IMU.gyroy(k); IMU.gyroz(k)] + INS.bg;
 
-% note that fAcc are already compensated by sensor with gravity
-% it seems that the Free Acc is measured in a global floating frame
-% With facc multiplied by R_board_facc (a quasi constant orientation
-% offset), f_ib_b0 represents the acc measured in b0 frame.
-% INS.f_ib_b0 = INS.R_board_facc * [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
-
 INS.f_ib_b = [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)];
 INS.f_ib_b_fedback = [IMU.faccx(k); IMU.faccy(k); IMU.faccz(k)] + INS.ba;
 
@@ -22,12 +16,6 @@ INS.omega_ib_b = [0, -INS.w_ibz_b, INS.w_iby_b;
                   INS.w_ibz_b, 0, -INS.w_ibx_b;
                   -INS.w_iby_b, INS.w_ibx_b, 0];
 
-% INS.omega_ie_n = w_ie * [0, sin(INS.lat / llh_scale), 0; 
-%                          -sin(INS.lat  / llh_scale), 0, -cos(INS.lat / llh_scale);
-%                          0, cos(INS.lat / llh_scale), 0];
-
-% INS.Rnb = INS.Rnb_ * (eye(3) + INS.omega_ib_b * T)...
-%           - INS.omega_ie_n * INS.Rnb_ * T;
 % neglecting earth rotation
 INS.Rnb = INS.Rnb_ * (eye(3) + INS.omega_ib_b * T);
 
@@ -44,16 +32,6 @@ INS.Rnb_fedback = INS.Rnb_fedback_ * (eye(3) + INS.omega_ib_b_fedback * T);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% velocity %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % raw INS
 INS.v_eb_n_ = INS.v_eb_n;
-% v_eb_n = v_eb_n_ + (Rnb_ * f_ib_b + g - cross(2 * Ren' * w_ie, v_eb_n)) * T;
-% INS.v_eb_n = INS.v_eb_n_ + (INS.Rnb_ * INS.f_ib_b) * T;
-% eul_tem = rotm2eul(INS.Rnb0' * INS.Rnb_);
-% INS.v_eb_n = INS.v_eb_n_ + (INS.Rnb0 * R3(eul_tem(1)) * INS.f_ib_b) * T;
-% INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0 * INS.f_ib_b0 * T;
-% INS.v_eb_n(3) = 0;  % disable velocity in Down direction
-% INS.v_eb_n = INS.v_eb_n_ + INS.Rnb0(1:2, 1:3) * INS.f_ib_b0 * T;
-% INS.v_eb_n = INS.v_eb_n_ + INS.Rnb_(1:2, 1:3) * INS.f_ib_b * T;
-%%%%%%%%%%%%%% this v_incre doesn't make a diffrence as the above line, but
-%%%%%%%%%%%%%% is more understandable
 INS.v_incre = (INS.Rnb_ * INS.f_ib_b + [0; 0; 9.81]) * T;
 INS.v_eb_n = INS.v_eb_n_ + INS.v_incre(1:2);
 

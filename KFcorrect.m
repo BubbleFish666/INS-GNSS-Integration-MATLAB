@@ -28,22 +28,6 @@ KF.bg = KF.x(11:13);
 KF.P = (eye(13) - KF.K * KF.H) * KF.P * (eye(13) - KF.K * KF.H)'...
        + KF.K * KF.R * KF.K';
 
-% % correct the INS
-% INS.llh_incre_total_corrected = [INS.lat_incre_total + KF.dllh(1);
-%                                  INS.lon_incre_total + KF.dllh(2);
-%                                  0];
-% INS.llh_corrected = [INS.lat0 + INS.llh_incre_total_corrected(1);
-%                      INS.lon0 + INS.llh_incre_total_corrected(2);
-%                      0];
-% 
-% INS.v_eb_n_corrected = INS.v_eb_n + KF.dv_eb_n;
-% 
-% INS.eul_nb_corrected = rotm2eul(KF.Rnn * INS.Rnb) * 180 / pi;
-% % INS.eul_nb_corrected(1) = changeDegRange360(INS.eul_nb_corrected(1));
-% 
-% INS.eul_b0b_corrected = rotm2eul(INS.Rnb0' * KF.Rnn * INS.Rnb) * 180 / pi;
-% % INS.eul_b0b_corrected(1) = changeDegRange360(INS.eul_b0b_corrected(1));
-
 % correct the fedback INS
 INS.llh_incre_total_corrected = [INS.lat_incre_total_fedback + KF.dllh(1);
                                  INS.lon_incre_total_fedback + KF.dllh(2);
@@ -84,13 +68,6 @@ KF.ba = [0;0;0];
 KF.bg = [0;0;0];
 
 %% logging
-% LOG.KF.dpsi_nb(2 * (k - range_start + 1), :) = KF.dpsi_nb;
-% LOG.KF.dv_eb_n(2 * (k - range_start + 1), :) = KF.dv_eb_n;
-% LOG.KF.dllh(2 * (k - range_start + 1), :) = KF.dllh;
-% LOG.KF.ba(2 * (k - range_start + 1), :) = KF.ba;
-% LOG.KF.bg(2 * (k - range_start + 1), :) = KF.bg;
-% LOG.KF.P{2 * (k - range_start + 1)} = KF.P;
-
 % INS corrected
 % LOG.INS.eul_nb_corrected(k - range_start + 1, :) = INS.eul_nb_corrected;
 LOG.INS.eul_b0b_corrected(k - range_start + 1, :) = INS.eul_b0b_corrected;
