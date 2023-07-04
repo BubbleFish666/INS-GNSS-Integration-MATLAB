@@ -1,15 +1,7 @@
 % initial orientation
-% Rnb = eye(3);
-% INS.psi0 = deg2rad(360 - heading(range_start));  % yaw
-% INS.psi0 = deg2rad(360 - 324.37);  % yaw at 26.0 s
 INS.psi0 = deg2rad(ref_traj.psi(1));  % yaw at 26.0 s
 INS.theta0 = 0;  % pitch
 INS.phi0 = 0;  % roll
-
-% MTi-3 frame is rotated about z-axis by -88.75 (or -59) deg (probably due
-% to disabling the magnetometer)
-% original MTi-3 board frame (ENU) to the frame where facc is measured
-% INS.R_board_facc = R3(deg2rad(-59));
 
 % n-frame to MTi-3 board frame (body frame)
 INS.Rnb0 = R3(0.5 * pi) * R1(pi);
@@ -18,14 +10,9 @@ INS.Rb0b = R3(INS.psi0)*R2(INS.theta0)*R1(INS.phi0);
 INS.Rnb = INS.Rnb0 * INS.Rb0b;  % n-frame to b-frame
 
 % initial velocity
-% INS.v_eb_n = [0; 0; 0];
 INS.v_eb_n = [0; 0];
 
-% initial latitude, longitude (degree) and height (m)
-% lat0 = single(deg2rad(48.1351));  % lat Munich
-% lon0 = single(deg2rad(11.5820));  % lon Munich
-% INS.lat0 = single(49.065972574);
-% INS.lon0 = single(9.260714896);
+% initial latitude, longitude (rad) and height (m)
 INS.lat0 = single(GNSS.lat_GNSS(range_start));
 INS.lon0 = single(GNSS.lon_GNSS(range_start));
 % INS.h0 = 520;  % height Munich
