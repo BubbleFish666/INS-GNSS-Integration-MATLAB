@@ -2,9 +2,7 @@
 % calculate measurement y with only fractional parts to avoid numerical issue
 KF.lat_GNSS_frac = GNSS.lat_GNSS(k) * llh_scale - INS.lat0_int;
 KF.lon_GNSS_frac = GNSS.lon_GNSS(k) * llh_scale - INS.lon0_int;
-% KF.z = [KF.lat_GNSS_frac; KF.lon_GNSS_frac]...
-%      - [INS.lat0_frac + INS.lat_incre_total;
-%         INS.lon0_frac + INS.lon_incre_total];  % milli rad
+
 KF.z = [GNSS.vn_GNSS(k); GNSS.ve_GNSS(k); KF.lat_GNSS_frac; KF.lon_GNSS_frac]...
      - [INS.v_eb_n(1);
         INS.v_eb_n(2);
@@ -22,23 +20,11 @@ KF.x = KF.x_pre + KF.K * (KF.z - KF.H * KF.x_pre);
 
 KF.dpsi_nb = KF.x(1:3);
 KF.Rnn = R3(KF.dpsi_nb(3)) * R2(KF.dpsi_nb(2)) * R1(KF.dpsi_nb(1));
-% KF.dv_eb_n = KF.x(4:6);
-% KF.dllh = KF.x(7:9);
-% KF.ba = KF.x(10:12);
-% KF.bg = KF.x(13:15);
 KF.dv_eb_n = KF.x(4:5);
 KF.dllh = KF.x(6:7);
 KF.ba = KF.x(8:10);
 KF.bg = KF.x(11:13);
 
-% dpsi_nb = [0; 0; 0];  % attitude error
-% dv_eb_n = [0; 0; 0];  % velocity error
-% dllh = [0; 0; 0];  % position error
-% ba = [0; 0; 0];  % accelorometer error
-% bg = [0; 0; 0];  % gyro error
-
-% KF.P = (eye(15) - KF.K * KF.H) * KF.P * (eye(15) - KF.K * KF.H)'...
-%        + KF.K * KF.R * KF.K';
 KF.P = (eye(13) - KF.K * KF.H) * KF.P * (eye(13) - KF.K * KF.H)'...
        + KF.K * KF.R * KF.K';
 
@@ -59,13 +45,6 @@ INS.eul_b0b_corrected = rotm2eul(INS.Rnb0' * KF.Rnn * INS.Rnb) * 180 / pi;
 % INS.eul_b0b_corrected(1) = changeDegRange360(INS.eul_b0b_corrected(1));
 
 %% logging
-% LOG.KF.dpsi_nb(2 * (k - range_start + 1), :) = KF.dpsi_nb;
-% LOG.KF.dv_eb_n(2 * (k - range_start + 1), :) = KF.dv_eb_n;
-% LOG.KF.dllh(2 * (k - range_start + 1), :) = KF.dllh;
-% LOG.KF.ba(2 * (k - range_start + 1), :) = KF.ba;
-% LOG.KF.bg(2 * (k - range_start + 1), :) = KF.bg;
-% LOG.KF.P{2 * (k - range_start + 1)} = KF.P;
-
 % KF error states
 LOG.KF.dpsi_nb(k - range_start + 1, :) = KF.dpsi_nb;
 LOG.KF.dv_eb_n(k - range_start + 1, :) = KF.dv_eb_n;

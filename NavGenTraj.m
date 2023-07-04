@@ -8,11 +8,6 @@ t = ref_traj.timeVector(2:end);
 
 % use saved sensor data
 archive_data = false;
-% data_name = 'datafusion_not_a_very_good_result.mat';
-% data_name = 'datafusion_test_600.mat';
-% data_name = 'datafusion_a_typical_result_600.mat';
-% data_name = 'datafusion_nice_result_with_GNSS_velocity.mat';
-% data_name = 'datafusion_nice_result_with_GNSS_velocity_larger_uncertainty.mat';
 addpath("test_data\");
 % data_name = 'test_data\datafusion_test_data_1.mat';
 data_name = 'temp.mat';
